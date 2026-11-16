@@ -1,0 +1,2973 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Estequiometría · Actividad interactiva · Composición de la Materia</title>
+<style>
+:root{--acc:#7b1e3a;--acc2:#a33b5c;--acc3:#f6e9ee;--ink:#1f2430;--mut:#5f6675;--line:#e4e1e6;--bg:#f6f4f5;--ok:#15803d;--okbg:#e7f6ec;--bad:#b91c1c;--badbg:#fdecec;--warn:#92400e;--warnbg:#fff4de;--card:#fff}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16.5px/1.55 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input{-webkit-user-select:text;user-select:text}
+sub,sup{font-size:.72em;line-height:0}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--acc);color:#fff;border:0;border-radius:11px;padding:9px 15px;font-weight:650}
+.btn:hover{background:var(--acc2)}.btn:disabled{background:#c9c3c8;cursor:not-allowed}
+.btn.sec{background:#fff;color:var(--acc);border:2px solid var(--acc)}
+.btn.sm{padding:6px 11px;font-size:.92rem}
+/* barra superior */
+#top{position:sticky;top:0;z-index:40;background:linear-gradient(110deg,#4a0f22,var(--acc));color:#fff;padding:8px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+#top .ttl{font-weight:750;font-size:1.02rem;line-height:1.2}#top .ttl small{display:block;font-weight:500;opacity:.8;font-size:.8rem}
+#top .sp{flex:1}
+.chip{background:rgba(255,255,255,.14);border-radius:999px;padding:4px 11px;font-size:.88rem;font-weight:650;white-space:nowrap}
+.chip.alert{background:#fbbf24;color:#3b2300}
+.tbtn{background:#fff;color:var(--acc);border:0;border-radius:10px;padding:6px 11px;font-weight:700;font-size:.9rem}
+#nav{position:sticky;top:var(--toph,52px);z-index:35;background:#fff;border-bottom:1px solid var(--line);display:flex;gap:6px;overflow-x:auto;padding:8px 10px;scrollbar-width:thin}
+#nav button{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:5px 12px;font-size:.88rem;white-space:nowrap;color:var(--ink)}
+#nav button.on{background:var(--acc);border-color:var(--acc);color:#fff}
+#nav button .dn{color:var(--ok);font-weight:800}#nav button.on .dn{color:#bbf7d0}
+#prog{height:5px;background:var(--line)}#prog i{display:block;height:100%;background:linear-gradient(90deg,var(--acc2),#f59f00);width:0;transition:width .4s}
+main{max-width:900px;margin:0 auto;padding:16px 14px 120px;position:relative;z-index:2}
+section.blk{display:none}section.blk.on{display:block}
+h2{font-size:1.3rem;margin:4px 0 10px;color:var(--acc)}
+.rec{background:var(--acc3);border-left:5px solid var(--acc);border-radius:12px;padding:10px 14px;margin-bottom:16px;font-size:.95rem}
+.rec b.h{display:block;color:var(--acc);margin-bottom:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.card .hd{display:flex;gap:10px;align-items:baseline;margin-bottom:6px}
+.card .no{background:var(--acc);color:#fff;border-radius:9px;padding:1px 9px;font-weight:800;font-size:.9rem}
+.card .tt{font-weight:700;color:var(--mut);font-size:.92rem}
+.card .pts{margin-left:auto;font-size:.85rem;font-weight:700;color:var(--mut);white-space:nowrap}
+.eq{font-size:1.12rem;background:#faf8f9;border:1px dashed #d9cfd4;border-radius:10px;padding:9px 12px;margin:8px 0;text-align:center;overflow-x:auto;white-space:nowrap}
+.eq .st{font-size:.74em;color:var(--mut);margin-left:1px}.eq .ar{color:var(--acc);font-weight:700;margin:0 6px}.cf{color:var(--acc)}
+.eqi{font-size:1.06em;white-space:nowrap}
+.pt{margin-top:10px;padding-top:8px;border-top:1px solid #f0edf0}
+.pt>.lb{font-weight:650;margin-bottom:6px}
+.inrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+input.ans,input.mi{font:inherit;font-size:1.05rem;padding:7px 10px;border:2px solid var(--line);border-radius:10px;width:200px;background:#fff;color:var(--ink)}
+input.ans:focus,input.mi:focus,input.si:focus{outline:none;border-color:var(--acc2)}
+input:disabled{background:#f3f1f2;color:#333}
+.unit{color:var(--mut);font-weight:600}
+.fmt{font-size:.82rem;color:var(--mut);margin-top:4px}
+.molg{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px}
+.molg label{display:flex;align-items:center;gap:6px;font-weight:650}.molg input.mi{width:120px}
+.subb{display:flex;align-items:flex-end;gap:2px;font-size:1.4rem;font-weight:700;flex-wrap:wrap}
+.subb span{display:inline-flex;align-items:flex-end}
+input.si{width:46px;font:inherit;font-size:1rem;padding:3px 4px;border:2px solid var(--line);border-radius:8px;text-align:center;margin:0 6px 0 1px;transform:translateY(8px)}
+.prev{margin-left:10px;font-size:1.05rem;color:var(--mut)}
+.opts label{display:flex;gap:9px;align-items:flex-start;border:1.5px solid var(--line);border-radius:11px;padding:8px 11px;margin:6px 0;cursor:pointer;background:#fff}
+.opts label:hover{border-color:var(--acc2)}.opts input{margin-top:5px;accent-color:var(--acc)}
+.opts label.okc{border-color:var(--ok);background:var(--okbg)}.opts label.badc{border-color:var(--bad);background:var(--badbg)}
+.fb{margin-top:8px;border-radius:10px;padding:0;font-size:.95rem}
+.fb.ok,.fb.bad,.fb.warn{padding:8px 11px}
+.fb.ok{background:var(--okbg);color:#14532d}.fb.bad{background:var(--badbg);color:#7f1d1d}.fb.warn{background:var(--warnbg);color:var(--warn)}
+.sol{display:none;margin-top:12px;background:#f7f9fc;border:1px solid #dfe5ef;border-radius:12px;padding:10px 13px;font-size:.95rem}
+.sol.on{display:block}.sol b.h{color:#1e3a8a}
+table.tsol{border-collapse:collapse;margin:6px 0;font-size:.9rem}table.tsol td,table.tsol th{border:1px solid #d9dfe9;padding:3px 8px;text-align:center}table.tsol th{background:#eef2f8}
+.navb{display:flex;justify-content:space-between;gap:10px;margin-top:6px}
+/* resultados */
+table.res{width:100%;border-collapse:collapse;font-size:.95rem}table.res td,table.res th{padding:7px 6px;border-bottom:1px solid var(--line);text-align:left}table.res td:last-child,table.res th:last-child{text-align:right}
+.mk{display:inline-block;min-width:30px;text-align:center;border-radius:7px;padding:0 4px;margin:1px;font-weight:800;font-size:.82rem}
+.mk.m2{background:var(--okbg);color:var(--ok)}.mk.m1{background:#fef3c7;color:#92400e}.mk.m0{background:var(--badbg);color:var(--bad)}.mk.mx{background:#eee;color:#888}
+.big{font-size:2rem;font-weight:800;color:var(--acc)}
+.comp-img{display:block;max-width:100%;width:440px;margin:12px auto;border:1px solid var(--line);border-radius:12px;box-shadow:0 4px 18px rgba(0,0,0,.08)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.small{font-size:.86rem;color:var(--mut)}
+.refs p{margin:4px 0;padding-left:2em;text-indent:-2em;font-size:.88rem}
+/* paneles */
+.panel{position:fixed;z-index:60;background:#fff;border:1px solid #cfc6cb;border-radius:16px;box-shadow:0 10px 34px rgba(0,0,0,.22);display:none;overflow:hidden}
+.panel.on{display:block}
+.panel .ph{background:var(--acc);color:#fff;padding:7px 12px;display:flex;align-items:center;gap:8px;font-weight:700;cursor:move;touch-action:none}
+.panel .ph button{margin-left:auto;background:rgba(255,255,255,.18);border:0;color:#fff;border-radius:8px;padding:2px 9px;font-weight:800}
+#calc{right:16px;bottom:16px;width:300px}
+#cdisp{background:#1f2430;color:#fff;padding:8px 12px;text-align:right;font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+#cexp{min-height:22px;font-size:.95rem;opacity:.85;word-break:break-all}#cres{font-size:1.5rem;font-weight:700;min-height:34px;word-break:break-all}
+#ckeys{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:9px}
+#ckeys button{border:0;border-radius:9px;padding:10px 0;background:#f1edf0;font-weight:700;font-size:1rem;color:var(--ink)}
+#ckeys button.op{background:#ead7df;color:var(--acc)}#ckeys button.eqk{background:var(--acc);color:#fff}#ckeys button.fn{background:#e6e9f2;font-size:.9rem}
+#ckeys button:active{transform:scale(.96)}
+#tabla{left:16px;bottom:16px;width:330px;max-height:70vh}
+#tabla .tb{max-height:calc(70vh - 40px);overflow:auto;padding:8px 10px}
+#tabla table{width:100%;border-collapse:collapse;font-size:.95rem}#tabla td{padding:5px 6px;border-bottom:1px solid var(--line)}#tabla td.sy{font-weight:800;color:var(--acc);font-size:1.1rem}#tabla td.ma{text-align:right;font-weight:700;font-family:ui-monospace,Menlo,Consolas,monospace}
+/* guardia y registro */
+#guard{position:fixed;inset:0;z-index:100;background:rgba(25,6,14,.97);color:#fff;display:none;align-items:center;justify-content:center;padding:20px;text-align:center}
+#guard.on{display:flex}#guard .box{max-width:520px}#guard h2{color:#fbbf24;font-size:1.6rem}#guard .cnt{font-size:3rem;font-weight:800}
+body.blur main,body.blur #nav{filter:blur(9px)}
+#reg{position:fixed;inset:0;z-index:90;background:linear-gradient(135deg,#3d0c1c,var(--acc) 60%,#b04a6b);display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto}
+#reg .box{background:#fff;border-radius:20px;max-width:560px;width:100%;padding:20px 22px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+#reg h1{margin:0;font-size:1.45rem;color:var(--acc)}#reg .sub{color:var(--mut);margin:2px 0 12px;font-size:.92rem}
+#reg label{display:block;font-weight:650;margin-top:10px;font-size:.95rem}
+#reg input[type=text]{display:block;width:100%;font:inherit;padding:9px 11px;border:2px solid var(--line);border-radius:10px;margin-top:3px}
+#reg ul{margin:8px 0;padding-left:20px;font-size:.9rem}#reg li{margin:3px 0}
+#reg .err{color:var(--bad);font-weight:650;min-height:1.3em;margin-top:6px;font-size:.92rem}
+#reg .chk{display:flex;gap:8px;align-items:flex-start;font-weight:500;margin-top:10px}
+#modal{position:fixed;inset:0;z-index:110;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:16px}
+#modal.on{display:flex}#modal .box{background:#fff;border-radius:16px;padding:18px 20px;max-width:440px}
+#toast{position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:120;background:#1f2430;color:#fff;padding:9px 16px;border-radius:12px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s;max-width:92vw;text-align:center}
+#toast.on{opacity:1}
+#wm{position:fixed;inset:0;z-index:30;pointer-events:none;background-repeat:repeat;opacity:1}
+@media (max-width:640px){#calc,#tabla{left:6px!important;right:6px!important;width:auto!important;top:auto!important;bottom:6px!important}#top .ttl small{display:none}input.ans{width:150px}}
+@media print{body *{display:none!important}body::before{content:"La impresión está deshabilitada en esta actividad.";display:block;padding:40px;font-size:20px}}
+</style>
+</head>
+<body>
+<div id="wm"></div>
+
+<div id="reg"><div class="box">
+  <h1>Estequiometría: fórmulas químicas y el mol</h1>
+  <p class="sub">Composición de la Materia · Lic. en Bioingeniería · Universidad Xochicalco, Campus Ensenada</p>
+  <div id="resume" class="small" style="display:none"></div>
+  <label>Nombre completo<input type="text" id="rName" autocomplete="off" maxlength="80" placeholder="Nombre(s) y apellidos"></label>
+  <label>Matrícula<input type="text" id="rMat" autocomplete="off" maxlength="16" placeholder="Tu matrícula"></label>
+  <label>Grupo <span class="small">(opcional)</span><input type="text" id="rGrp" autocomplete="off" maxlength="20"></label>
+  <b style="display:block;margin-top:14px">Reglas de la actividad</b>
+  <ul>
+    <li>Tus ejercicios se generan a partir de tu matrícula: cada estudiante tiene números y compuestos distintos.</li>
+    <li>La actividad se trabaja en <b>pantalla completa</b>. Si sales de ella, cambias de pestaña o de ventana, la pantalla se bloquea y la salida <b>queda registrada</b> en tu comprobante.</li>
+    <li>Copiar, pegar y seleccionar texto están deshabilitados; los intentos también quedan registrados.</li>
+    <li>No hay límite de tiempo, pero se registra el tiempo que dedicas.</li>
+    <li>Las preguntas numéricas tienen <b>2 intentos</b> (1 punto al primero, 0.5 al segundo); las de opción múltiple, <b>1 intento</b>. Después de responder verás la solución.</li>
+    <li>Tienes calculadora y tabla de masas atómicas dentro de la actividad. Al terminar descargas tu <b>comprobante</b> (PNG o PDF) y lo entregas.</li>
+  </ul>
+  <label class="chk"><input type="checkbox" id="rOk"> Leí las reglas y trabajaré de forma individual.</label>
+  <div class="err" id="rErr"></div>
+  <button class="btn" id="rGo" style="width:100%;margin-top:6px;padding:12px">Entrar en pantalla completa e iniciar</button>
+</div></div>
+
+<header id="top">
+  <div class="ttl">Estequiometría · Tema 5<small id="who"></small></div>
+  <span class="sp"></span>
+  <span class="chip" id="clock">⏱ 00:00:00</span>
+  <span class="chip" id="exits">Salidas: 0</span>
+  <button class="tbtn" id="bTab">📋 Masas</button>
+  <button class="tbtn" id="bCalc">🧮 Calculadora</button>
+</header>
+<nav id="nav"></nav>
+<div id="prog"><i></i></div>
+<main id="main"></main>
+
+<div class="panel" id="calc"><div class="ph" data-drag="calc">🧮 Calculadora<button data-close="calc">✕</button></div>
+  <div id="cdisp"><div id="cexp"></div><div id="cres">0</div></div><div id="ckeys"></div></div>
+<div class="panel" id="tabla"><div class="ph" data-drag="tabla">📋 Masas atómicas (uma)<button data-close="tabla">✕</button></div><div class="tb" id="tbody"></div></div>
+
+<div id="guard"><div class="box">
+  <h2>⚠ Saliste de la actividad</h2>
+  <p id="gWhy"></p>
+  <div class="cnt" id="gCnt">1</div><p>salida(s) registrada(s). Este dato aparecerá en tu comprobante.</p>
+  <button class="btn" id="gBack" style="background:#fbbf24;color:#3b2300;padding:12px 20px">Volver a la actividad</button>
+  <p class="small" style="color:#e9d5dc;margin-top:14px">El tiempo que pases fuera también se registra.</p>
+</div></div>
+<div id="modal"><div class="box" id="mbox"></div></div>
+<div id="toast"></div>
+
+<script>
+/* qrcode-generator 1.4.4 (MIT) — Kazuhiko Arase */
+//---------------------------------------------------------------------
+//
+// QR Code Generator for JavaScript
+//
+// Copyright (c) 2009 Kazuhiko Arase
+//
+// URL: http://www.d-project.com/
+//
+// Licensed under the MIT license:
+//  http://www.opensource.org/licenses/mit-license.php
+//
+// The word 'QR Code' is registered trademark of
+// DENSO WAVE INCORPORATED
+//  http://www.denso-wave.com/qrcode/faqpatent-e.html
+//
+//---------------------------------------------------------------------
+
+var qrcode = function() {
+
+  //---------------------------------------------------------------------
+  // qrcode
+  //---------------------------------------------------------------------
+
+  /**
+   * qrcode
+   * @param typeNumber 1 to 40
+   * @param errorCorrectionLevel 'L','M','Q','H'
+   */
+  var qrcode = function(typeNumber, errorCorrectionLevel) {
+
+    var PAD0 = 0xEC;
+    var PAD1 = 0x11;
+
+    var _typeNumber = typeNumber;
+    var _errorCorrectionLevel = QRErrorCorrectionLevel[errorCorrectionLevel];
+    var _modules = null;
+    var _moduleCount = 0;
+    var _dataCache = null;
+    var _dataList = [];
+
+    var _this = {};
+
+    var makeImpl = function(test, maskPattern) {
+
+      _moduleCount = _typeNumber * 4 + 17;
+      _modules = function(moduleCount) {
+        var modules = new Array(moduleCount);
+        for (var row = 0; row < moduleCount; row += 1) {
+          modules[row] = new Array(moduleCount);
+          for (var col = 0; col < moduleCount; col += 1) {
+            modules[row][col] = null;
+          }
+        }
+        return modules;
+      }(_moduleCount);
+
+      setupPositionProbePattern(0, 0);
+      setupPositionProbePattern(_moduleCount - 7, 0);
+      setupPositionProbePattern(0, _moduleCount - 7);
+      setupPositionAdjustPattern();
+      setupTimingPattern();
+      setupTypeInfo(test, maskPattern);
+
+      if (_typeNumber >= 7) {
+        setupTypeNumber(test);
+      }
+
+      if (_dataCache == null) {
+        _dataCache = createData(_typeNumber, _errorCorrectionLevel, _dataList);
+      }
+
+      mapData(_dataCache, maskPattern);
+    };
+
+    var setupPositionProbePattern = function(row, col) {
+
+      for (var r = -1; r <= 7; r += 1) {
+
+        if (row + r <= -1 || _moduleCount <= row + r) continue;
+
+        for (var c = -1; c <= 7; c += 1) {
+
+          if (col + c <= -1 || _moduleCount <= col + c) continue;
+
+          if ( (0 <= r && r <= 6 && (c == 0 || c == 6) )
+              || (0 <= c && c <= 6 && (r == 0 || r == 6) )
+              || (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
+            _modules[row + r][col + c] = true;
+          } else {
+            _modules[row + r][col + c] = false;
+          }
+        }
+      }
+    };
+
+    var getBestMaskPattern = function() {
+
+      var minLostPoint = 0;
+      var pattern = 0;
+
+      for (var i = 0; i < 8; i += 1) {
+
+        makeImpl(true, i);
+
+        var lostPoint = QRUtil.getLostPoint(_this);
+
+        if (i == 0 || minLostPoint > lostPoint) {
+          minLostPoint = lostPoint;
+          pattern = i;
+        }
+      }
+
+      return pattern;
+    };
+
+    var setupTimingPattern = function() {
+
+      for (var r = 8; r < _moduleCount - 8; r += 1) {
+        if (_modules[r][6] != null) {
+          continue;
+        }
+        _modules[r][6] = (r % 2 == 0);
+      }
+
+      for (var c = 8; c < _moduleCount - 8; c += 1) {
+        if (_modules[6][c] != null) {
+          continue;
+        }
+        _modules[6][c] = (c % 2 == 0);
+      }
+    };
+
+    var setupPositionAdjustPattern = function() {
+
+      var pos = QRUtil.getPatternPosition(_typeNumber);
+
+      for (var i = 0; i < pos.length; i += 1) {
+
+        for (var j = 0; j < pos.length; j += 1) {
+
+          var row = pos[i];
+          var col = pos[j];
+
+          if (_modules[row][col] != null) {
+            continue;
+          }
+
+          for (var r = -2; r <= 2; r += 1) {
+
+            for (var c = -2; c <= 2; c += 1) {
+
+              if (r == -2 || r == 2 || c == -2 || c == 2
+                  || (r == 0 && c == 0) ) {
+                _modules[row + r][col + c] = true;
+              } else {
+                _modules[row + r][col + c] = false;
+              }
+            }
+          }
+        }
+      }
+    };
+
+    var setupTypeNumber = function(test) {
+
+      var bits = QRUtil.getBCHTypeNumber(_typeNumber);
+
+      for (var i = 0; i < 18; i += 1) {
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+        _modules[Math.floor(i / 3)][i % 3 + _moduleCount - 8 - 3] = mod;
+      }
+
+      for (var i = 0; i < 18; i += 1) {
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+        _modules[i % 3 + _moduleCount - 8 - 3][Math.floor(i / 3)] = mod;
+      }
+    };
+
+    var setupTypeInfo = function(test, maskPattern) {
+
+      var data = (_errorCorrectionLevel << 3) | maskPattern;
+      var bits = QRUtil.getBCHTypeInfo(data);
+
+      // vertical
+      for (var i = 0; i < 15; i += 1) {
+
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+
+        if (i < 6) {
+          _modules[i][8] = mod;
+        } else if (i < 8) {
+          _modules[i + 1][8] = mod;
+        } else {
+          _modules[_moduleCount - 15 + i][8] = mod;
+        }
+      }
+
+      // horizontal
+      for (var i = 0; i < 15; i += 1) {
+
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+
+        if (i < 8) {
+          _modules[8][_moduleCount - i - 1] = mod;
+        } else if (i < 9) {
+          _modules[8][15 - i - 1 + 1] = mod;
+        } else {
+          _modules[8][15 - i - 1] = mod;
+        }
+      }
+
+      // fixed module
+      _modules[_moduleCount - 8][8] = (!test);
+    };
+
+    var mapData = function(data, maskPattern) {
+
+      var inc = -1;
+      var row = _moduleCount - 1;
+      var bitIndex = 7;
+      var byteIndex = 0;
+      var maskFunc = QRUtil.getMaskFunction(maskPattern);
+
+      for (var col = _moduleCount - 1; col > 0; col -= 2) {
+
+        if (col == 6) col -= 1;
+
+        while (true) {
+
+          for (var c = 0; c < 2; c += 1) {
+
+            if (_modules[row][col - c] == null) {
+
+              var dark = false;
+
+              if (byteIndex < data.length) {
+                dark = ( ( (data[byteIndex] >>> bitIndex) & 1) == 1);
+              }
+
+              var mask = maskFunc(row, col - c);
+
+              if (mask) {
+                dark = !dark;
+              }
+
+              _modules[row][col - c] = dark;
+              bitIndex -= 1;
+
+              if (bitIndex == -1) {
+                byteIndex += 1;
+                bitIndex = 7;
+              }
+            }
+          }
+
+          row += inc;
+
+          if (row < 0 || _moduleCount <= row) {
+            row -= inc;
+            inc = -inc;
+            break;
+          }
+        }
+      }
+    };
+
+    var createBytes = function(buffer, rsBlocks) {
+
+      var offset = 0;
+
+      var maxDcCount = 0;
+      var maxEcCount = 0;
+
+      var dcdata = new Array(rsBlocks.length);
+      var ecdata = new Array(rsBlocks.length);
+
+      for (var r = 0; r < rsBlocks.length; r += 1) {
+
+        var dcCount = rsBlocks[r].dataCount;
+        var ecCount = rsBlocks[r].totalCount - dcCount;
+
+        maxDcCount = Math.max(maxDcCount, dcCount);
+        maxEcCount = Math.max(maxEcCount, ecCount);
+
+        dcdata[r] = new Array(dcCount);
+
+        for (var i = 0; i < dcdata[r].length; i += 1) {
+          dcdata[r][i] = 0xff & buffer.getBuffer()[i + offset];
+        }
+        offset += dcCount;
+
+        var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
+        var rawPoly = qrPolynomial(dcdata[r], rsPoly.getLength() - 1);
+
+        var modPoly = rawPoly.mod(rsPoly);
+        ecdata[r] = new Array(rsPoly.getLength() - 1);
+        for (var i = 0; i < ecdata[r].length; i += 1) {
+          var modIndex = i + modPoly.getLength() - ecdata[r].length;
+          ecdata[r][i] = (modIndex >= 0)? modPoly.getAt(modIndex) : 0;
+        }
+      }
+
+      var totalCodeCount = 0;
+      for (var i = 0; i < rsBlocks.length; i += 1) {
+        totalCodeCount += rsBlocks[i].totalCount;
+      }
+
+      var data = new Array(totalCodeCount);
+      var index = 0;
+
+      for (var i = 0; i < maxDcCount; i += 1) {
+        for (var r = 0; r < rsBlocks.length; r += 1) {
+          if (i < dcdata[r].length) {
+            data[index] = dcdata[r][i];
+            index += 1;
+          }
+        }
+      }
+
+      for (var i = 0; i < maxEcCount; i += 1) {
+        for (var r = 0; r < rsBlocks.length; r += 1) {
+          if (i < ecdata[r].length) {
+            data[index] = ecdata[r][i];
+            index += 1;
+          }
+        }
+      }
+
+      return data;
+    };
+
+    var createData = function(typeNumber, errorCorrectionLevel, dataList) {
+
+      var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectionLevel);
+
+      var buffer = qrBitBuffer();
+
+      for (var i = 0; i < dataList.length; i += 1) {
+        var data = dataList[i];
+        buffer.put(data.getMode(), 4);
+        buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber) );
+        data.write(buffer);
+      }
+
+      // calc num max data.
+      var totalDataCount = 0;
+      for (var i = 0; i < rsBlocks.length; i += 1) {
+        totalDataCount += rsBlocks[i].dataCount;
+      }
+
+      if (buffer.getLengthInBits() > totalDataCount * 8) {
+        throw 'code length overflow. ('
+          + buffer.getLengthInBits()
+          + '>'
+          + totalDataCount * 8
+          + ')';
+      }
+
+      // end code
+      if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
+        buffer.put(0, 4);
+      }
+
+      // padding
+      while (buffer.getLengthInBits() % 8 != 0) {
+        buffer.putBit(false);
+      }
+
+      // padding
+      while (true) {
+
+        if (buffer.getLengthInBits() >= totalDataCount * 8) {
+          break;
+        }
+        buffer.put(PAD0, 8);
+
+        if (buffer.getLengthInBits() >= totalDataCount * 8) {
+          break;
+        }
+        buffer.put(PAD1, 8);
+      }
+
+      return createBytes(buffer, rsBlocks);
+    };
+
+    _this.addData = function(data, mode) {
+
+      mode = mode || 'Byte';
+
+      var newData = null;
+
+      switch(mode) {
+      case 'Numeric' :
+        newData = qrNumber(data);
+        break;
+      case 'Alphanumeric' :
+        newData = qrAlphaNum(data);
+        break;
+      case 'Byte' :
+        newData = qr8BitByte(data);
+        break;
+      case 'Kanji' :
+        newData = qrKanji(data);
+        break;
+      default :
+        throw 'mode:' + mode;
+      }
+
+      _dataList.push(newData);
+      _dataCache = null;
+    };
+
+    _this.isDark = function(row, col) {
+      if (row < 0 || _moduleCount <= row || col < 0 || _moduleCount <= col) {
+        throw row + ',' + col;
+      }
+      return _modules[row][col];
+    };
+
+    _this.getModuleCount = function() {
+      return _moduleCount;
+    };
+
+    _this.make = function() {
+      if (_typeNumber < 1) {
+        var typeNumber = 1;
+
+        for (; typeNumber < 40; typeNumber++) {
+          var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, _errorCorrectionLevel);
+          var buffer = qrBitBuffer();
+
+          for (var i = 0; i < _dataList.length; i++) {
+            var data = _dataList[i];
+            buffer.put(data.getMode(), 4);
+            buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber) );
+            data.write(buffer);
+          }
+
+          var totalDataCount = 0;
+          for (var i = 0; i < rsBlocks.length; i++) {
+            totalDataCount += rsBlocks[i].dataCount;
+          }
+
+          if (buffer.getLengthInBits() <= totalDataCount * 8) {
+            break;
+          }
+        }
+
+        _typeNumber = typeNumber;
+      }
+
+      makeImpl(false, getBestMaskPattern() );
+    };
+
+    _this.createTableTag = function(cellSize, margin) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var qrHtml = '';
+
+      qrHtml += '<table style="';
+      qrHtml += ' border-width: 0px; border-style: none;';
+      qrHtml += ' border-collapse: collapse;';
+      qrHtml += ' padding: 0px; margin: ' + margin + 'px;';
+      qrHtml += '">';
+      qrHtml += '<tbody>';
+
+      for (var r = 0; r < _this.getModuleCount(); r += 1) {
+
+        qrHtml += '<tr>';
+
+        for (var c = 0; c < _this.getModuleCount(); c += 1) {
+          qrHtml += '<td style="';
+          qrHtml += ' border-width: 0px; border-style: none;';
+          qrHtml += ' border-collapse: collapse;';
+          qrHtml += ' padding: 0px; margin: 0px;';
+          qrHtml += ' width: ' + cellSize + 'px;';
+          qrHtml += ' height: ' + cellSize + 'px;';
+          qrHtml += ' background-color: ';
+          qrHtml += _this.isDark(r, c)? '#000000' : '#ffffff';
+          qrHtml += ';';
+          qrHtml += '"/>';
+        }
+
+        qrHtml += '</tr>';
+      }
+
+      qrHtml += '</tbody>';
+      qrHtml += '</table>';
+
+      return qrHtml;
+    };
+
+    _this.createSvgTag = function(cellSize, margin, alt, title) {
+
+      var opts = {};
+      if (typeof arguments[0] == 'object') {
+        // Called by options.
+        opts = arguments[0];
+        // overwrite cellSize and margin.
+        cellSize = opts.cellSize;
+        margin = opts.margin;
+        alt = opts.alt;
+        title = opts.title;
+      }
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      // Compose alt property surrogate
+      alt = (typeof alt === 'string') ? {text: alt} : alt || {};
+      alt.text = alt.text || null;
+      alt.id = (alt.text) ? alt.id || 'qrcode-description' : null;
+
+      // Compose title property surrogate
+      title = (typeof title === 'string') ? {text: title} : title || {};
+      title.text = title.text || null;
+      title.id = (title.text) ? title.id || 'qrcode-title' : null;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var c, mc, r, mr, qrSvg='', rect;
+
+      rect = 'l' + cellSize + ',0 0,' + cellSize +
+        ' -' + cellSize + ',0 0,-' + cellSize + 'z ';
+
+      qrSvg += '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"';
+      qrSvg += !opts.scalable ? ' width="' + size + 'px" height="' + size + 'px"' : '';
+      qrSvg += ' viewBox="0 0 ' + size + ' ' + size + '" ';
+      qrSvg += ' preserveAspectRatio="xMinYMin meet"';
+      qrSvg += (title.text || alt.text) ? ' role="img" aria-labelledby="' +
+          escapeXml([title.id, alt.id].join(' ').trim() ) + '"' : '';
+      qrSvg += '>';
+      qrSvg += (title.text) ? '<title id="' + escapeXml(title.id) + '">' +
+          escapeXml(title.text) + '</title>' : '';
+      qrSvg += (alt.text) ? '<description id="' + escapeXml(alt.id) + '">' +
+          escapeXml(alt.text) + '</description>' : '';
+      qrSvg += '<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>';
+      qrSvg += '<path d="';
+
+      for (r = 0; r < _this.getModuleCount(); r += 1) {
+        mr = r * cellSize + margin;
+        for (c = 0; c < _this.getModuleCount(); c += 1) {
+          if (_this.isDark(r, c) ) {
+            mc = c*cellSize+margin;
+            qrSvg += 'M' + mc + ',' + mr + rect;
+          }
+        }
+      }
+
+      qrSvg += '" stroke="transparent" fill="black"/>';
+      qrSvg += '</svg>';
+
+      return qrSvg;
+    };
+
+    _this.createDataURL = function(cellSize, margin) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      return createDataURL(size, size, function(x, y) {
+        if (min <= x && x < max && min <= y && y < max) {
+          var c = Math.floor( (x - min) / cellSize);
+          var r = Math.floor( (y - min) / cellSize);
+          return _this.isDark(r, c)? 0 : 1;
+        } else {
+          return 1;
+        }
+      } );
+    };
+
+    _this.createImgTag = function(cellSize, margin, alt) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+
+      var img = '';
+      img += '<img';
+      img += '\u0020src="';
+      img += _this.createDataURL(cellSize, margin);
+      img += '"';
+      img += '\u0020width="';
+      img += size;
+      img += '"';
+      img += '\u0020height="';
+      img += size;
+      img += '"';
+      if (alt) {
+        img += '\u0020alt="';
+        img += escapeXml(alt);
+        img += '"';
+      }
+      img += '/>';
+
+      return img;
+    };
+
+    var escapeXml = function(s) {
+      var escaped = '';
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charAt(i);
+        switch(c) {
+        case '<': escaped += '&lt;'; break;
+        case '>': escaped += '&gt;'; break;
+        case '&': escaped += '&amp;'; break;
+        case '"': escaped += '&quot;'; break;
+        default : escaped += c; break;
+        }
+      }
+      return escaped;
+    };
+
+    var _createHalfASCII = function(margin) {
+      var cellSize = 1;
+      margin = (typeof margin == 'undefined')? cellSize * 2 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      var y, x, r1, r2, p;
+
+      var blocks = {
+        '██': '█',
+        '█ ': '▀',
+        ' █': '▄',
+        '  ': ' '
+      };
+
+      var blocksLastLineNoMargin = {
+        '██': '▀',
+        '█ ': '▀',
+        ' █': ' ',
+        '  ': ' '
+      };
+
+      var ascii = '';
+      for (y = 0; y < size; y += 2) {
+        r1 = Math.floor((y - min) / cellSize);
+        r2 = Math.floor((y + 1 - min) / cellSize);
+        for (x = 0; x < size; x += 1) {
+          p = '█';
+
+          if (min <= x && x < max && min <= y && y < max && _this.isDark(r1, Math.floor((x - min) / cellSize))) {
+            p = ' ';
+          }
+
+          if (min <= x && x < max && min <= y+1 && y+1 < max && _this.isDark(r2, Math.floor((x - min) / cellSize))) {
+            p += ' ';
+          }
+          else {
+            p += '█';
+          }
+
+          // Output 2 characters per pixel, to create full square. 1 character per pixels gives only half width of square.
+          ascii += (margin < 1 && y+1 >= max) ? blocksLastLineNoMargin[p] : blocks[p];
+        }
+
+        ascii += '\n';
+      }
+
+      if (size % 2 && margin > 0) {
+        return ascii.substring(0, ascii.length - size - 1) + Array(size+1).join('▀');
+      }
+
+      return ascii.substring(0, ascii.length-1);
+    };
+
+    _this.createASCII = function(cellSize, margin) {
+      cellSize = cellSize || 1;
+
+      if (cellSize < 2) {
+        return _createHalfASCII(margin);
+      }
+
+      cellSize -= 1;
+      margin = (typeof margin == 'undefined')? cellSize * 2 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      var y, x, r, p;
+
+      var white = Array(cellSize+1).join('██');
+      var black = Array(cellSize+1).join('  ');
+
+      var ascii = '';
+      var line = '';
+      for (y = 0; y < size; y += 1) {
+        r = Math.floor( (y - min) / cellSize);
+        line = '';
+        for (x = 0; x < size; x += 1) {
+          p = 1;
+
+          if (min <= x && x < max && min <= y && y < max && _this.isDark(r, Math.floor((x - min) / cellSize))) {
+            p = 0;
+          }
+
+          // Output 2 characters per pixel, to create full square. 1 character per pixels gives only half width of square.
+          line += p ? white : black;
+        }
+
+        for (r = 0; r < cellSize; r += 1) {
+          ascii += line + '\n';
+        }
+      }
+
+      return ascii.substring(0, ascii.length-1);
+    };
+
+    _this.renderTo2dContext = function(context, cellSize) {
+      cellSize = cellSize || 2;
+      var length = _this.getModuleCount();
+      for (var row = 0; row < length; row++) {
+        for (var col = 0; col < length; col++) {
+          context.fillStyle = _this.isDark(row, col) ? 'black' : 'white';
+          context.fillRect(row * cellSize, col * cellSize, cellSize, cellSize);
+        }
+      }
+    }
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrcode.stringToBytes
+  //---------------------------------------------------------------------
+
+  qrcode.stringToBytesFuncs = {
+    'default' : function(s) {
+      var bytes = [];
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charCodeAt(i);
+        bytes.push(c & 0xff);
+      }
+      return bytes;
+    }
+  };
+
+  qrcode.stringToBytes = qrcode.stringToBytesFuncs['default'];
+
+  //---------------------------------------------------------------------
+  // qrcode.createStringToBytes
+  //---------------------------------------------------------------------
+
+  /**
+   * @param unicodeData base64 string of byte array.
+   * [16bit Unicode],[16bit Bytes], ...
+   * @param numChars
+   */
+  qrcode.createStringToBytes = function(unicodeData, numChars) {
+
+    // create conversion map.
+
+    var unicodeMap = function() {
+
+      var bin = base64DecodeInputStream(unicodeData);
+      var read = function() {
+        var b = bin.read();
+        if (b == -1) throw 'eof';
+        return b;
+      };
+
+      var count = 0;
+      var unicodeMap = {};
+      while (true) {
+        var b0 = bin.read();
+        if (b0 == -1) break;
+        var b1 = read();
+        var b2 = read();
+        var b3 = read();
+        var k = String.fromCharCode( (b0 << 8) | b1);
+        var v = (b2 << 8) | b3;
+        unicodeMap[k] = v;
+        count += 1;
+      }
+      if (count != numChars) {
+        throw count + ' != ' + numChars;
+      }
+
+      return unicodeMap;
+    }();
+
+    var unknownChar = '?'.charCodeAt(0);
+
+    return function(s) {
+      var bytes = [];
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charCodeAt(i);
+        if (c < 128) {
+          bytes.push(c);
+        } else {
+          var b = unicodeMap[s.charAt(i)];
+          if (typeof b == 'number') {
+            if ( (b & 0xff) == b) {
+              // 1byte
+              bytes.push(b);
+            } else {
+              // 2bytes
+              bytes.push(b >>> 8);
+              bytes.push(b & 0xff);
+            }
+          } else {
+            bytes.push(unknownChar);
+          }
+        }
+      }
+      return bytes;
+    };
+  };
+
+  //---------------------------------------------------------------------
+  // QRMode
+  //---------------------------------------------------------------------
+
+  var QRMode = {
+    MODE_NUMBER :    1 << 0,
+    MODE_ALPHA_NUM : 1 << 1,
+    MODE_8BIT_BYTE : 1 << 2,
+    MODE_KANJI :     1 << 3
+  };
+
+  //---------------------------------------------------------------------
+  // QRErrorCorrectionLevel
+  //---------------------------------------------------------------------
+
+  var QRErrorCorrectionLevel = {
+    L : 1,
+    M : 0,
+    Q : 3,
+    H : 2
+  };
+
+  //---------------------------------------------------------------------
+  // QRMaskPattern
+  //---------------------------------------------------------------------
+
+  var QRMaskPattern = {
+    PATTERN000 : 0,
+    PATTERN001 : 1,
+    PATTERN010 : 2,
+    PATTERN011 : 3,
+    PATTERN100 : 4,
+    PATTERN101 : 5,
+    PATTERN110 : 6,
+    PATTERN111 : 7
+  };
+
+  //---------------------------------------------------------------------
+  // QRUtil
+  //---------------------------------------------------------------------
+
+  var QRUtil = function() {
+
+    var PATTERN_POSITION_TABLE = [
+      [],
+      [6, 18],
+      [6, 22],
+      [6, 26],
+      [6, 30],
+      [6, 34],
+      [6, 22, 38],
+      [6, 24, 42],
+      [6, 26, 46],
+      [6, 28, 50],
+      [6, 30, 54],
+      [6, 32, 58],
+      [6, 34, 62],
+      [6, 26, 46, 66],
+      [6, 26, 48, 70],
+      [6, 26, 50, 74],
+      [6, 30, 54, 78],
+      [6, 30, 56, 82],
+      [6, 30, 58, 86],
+      [6, 34, 62, 90],
+      [6, 28, 50, 72, 94],
+      [6, 26, 50, 74, 98],
+      [6, 30, 54, 78, 102],
+      [6, 28, 54, 80, 106],
+      [6, 32, 58, 84, 110],
+      [6, 30, 58, 86, 114],
+      [6, 34, 62, 90, 118],
+      [6, 26, 50, 74, 98, 122],
+      [6, 30, 54, 78, 102, 126],
+      [6, 26, 52, 78, 104, 130],
+      [6, 30, 56, 82, 108, 134],
+      [6, 34, 60, 86, 112, 138],
+      [6, 30, 58, 86, 114, 142],
+      [6, 34, 62, 90, 118, 146],
+      [6, 30, 54, 78, 102, 126, 150],
+      [6, 24, 50, 76, 102, 128, 154],
+      [6, 28, 54, 80, 106, 132, 158],
+      [6, 32, 58, 84, 110, 136, 162],
+      [6, 26, 54, 82, 110, 138, 166],
+      [6, 30, 58, 86, 114, 142, 170]
+    ];
+    var G15 = (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0);
+    var G18 = (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0);
+    var G15_MASK = (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
+
+    var _this = {};
+
+    var getBCHDigit = function(data) {
+      var digit = 0;
+      while (data != 0) {
+        digit += 1;
+        data >>>= 1;
+      }
+      return digit;
+    };
+
+    _this.getBCHTypeInfo = function(data) {
+      var d = data << 10;
+      while (getBCHDigit(d) - getBCHDigit(G15) >= 0) {
+        d ^= (G15 << (getBCHDigit(d) - getBCHDigit(G15) ) );
+      }
+      return ( (data << 10) | d) ^ G15_MASK;
+    };
+
+    _this.getBCHTypeNumber = function(data) {
+      var d = data << 12;
+      while (getBCHDigit(d) - getBCHDigit(G18) >= 0) {
+        d ^= (G18 << (getBCHDigit(d) - getBCHDigit(G18) ) );
+      }
+      return (data << 12) | d;
+    };
+
+    _this.getPatternPosition = function(typeNumber) {
+      return PATTERN_POSITION_TABLE[typeNumber - 1];
+    };
+
+    _this.getMaskFunction = function(maskPattern) {
+
+      switch (maskPattern) {
+
+      case QRMaskPattern.PATTERN000 :
+        return function(i, j) { return (i + j) % 2 == 0; };
+      case QRMaskPattern.PATTERN001 :
+        return function(i, j) { return i % 2 == 0; };
+      case QRMaskPattern.PATTERN010 :
+        return function(i, j) { return j % 3 == 0; };
+      case QRMaskPattern.PATTERN011 :
+        return function(i, j) { return (i + j) % 3 == 0; };
+      case QRMaskPattern.PATTERN100 :
+        return function(i, j) { return (Math.floor(i / 2) + Math.floor(j / 3) ) % 2 == 0; };
+      case QRMaskPattern.PATTERN101 :
+        return function(i, j) { return (i * j) % 2 + (i * j) % 3 == 0; };
+      case QRMaskPattern.PATTERN110 :
+        return function(i, j) { return ( (i * j) % 2 + (i * j) % 3) % 2 == 0; };
+      case QRMaskPattern.PATTERN111 :
+        return function(i, j) { return ( (i * j) % 3 + (i + j) % 2) % 2 == 0; };
+
+      default :
+        throw 'bad maskPattern:' + maskPattern;
+      }
+    };
+
+    _this.getErrorCorrectPolynomial = function(errorCorrectLength) {
+      var a = qrPolynomial([1], 0);
+      for (var i = 0; i < errorCorrectLength; i += 1) {
+        a = a.multiply(qrPolynomial([1, QRMath.gexp(i)], 0) );
+      }
+      return a;
+    };
+
+    _this.getLengthInBits = function(mode, type) {
+
+      if (1 <= type && type < 10) {
+
+        // 1 - 9
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 10;
+        case QRMode.MODE_ALPHA_NUM : return 9;
+        case QRMode.MODE_8BIT_BYTE : return 8;
+        case QRMode.MODE_KANJI     : return 8;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else if (type < 27) {
+
+        // 10 - 26
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 12;
+        case QRMode.MODE_ALPHA_NUM : return 11;
+        case QRMode.MODE_8BIT_BYTE : return 16;
+        case QRMode.MODE_KANJI     : return 10;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else if (type < 41) {
+
+        // 27 - 40
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 14;
+        case QRMode.MODE_ALPHA_NUM : return 13;
+        case QRMode.MODE_8BIT_BYTE : return 16;
+        case QRMode.MODE_KANJI     : return 12;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else {
+        throw 'type:' + type;
+      }
+    };
+
+    _this.getLostPoint = function(qrcode) {
+
+      var moduleCount = qrcode.getModuleCount();
+
+      var lostPoint = 0;
+
+      // LEVEL1
+
+      for (var row = 0; row < moduleCount; row += 1) {
+        for (var col = 0; col < moduleCount; col += 1) {
+
+          var sameCount = 0;
+          var dark = qrcode.isDark(row, col);
+
+          for (var r = -1; r <= 1; r += 1) {
+
+            if (row + r < 0 || moduleCount <= row + r) {
+              continue;
+            }
+
+            for (var c = -1; c <= 1; c += 1) {
+
+              if (col + c < 0 || moduleCount <= col + c) {
+                continue;
+              }
+
+              if (r == 0 && c == 0) {
+                continue;
+              }
+
+              if (dark == qrcode.isDark(row + r, col + c) ) {
+                sameCount += 1;
+              }
+            }
+          }
+
+          if (sameCount > 5) {
+            lostPoint += (3 + sameCount - 5);
+          }
+        }
+      };
+
+      // LEVEL2
+
+      for (var row = 0; row < moduleCount - 1; row += 1) {
+        for (var col = 0; col < moduleCount - 1; col += 1) {
+          var count = 0;
+          if (qrcode.isDark(row, col) ) count += 1;
+          if (qrcode.isDark(row + 1, col) ) count += 1;
+          if (qrcode.isDark(row, col + 1) ) count += 1;
+          if (qrcode.isDark(row + 1, col + 1) ) count += 1;
+          if (count == 0 || count == 4) {
+            lostPoint += 3;
+          }
+        }
+      }
+
+      // LEVEL3
+
+      for (var row = 0; row < moduleCount; row += 1) {
+        for (var col = 0; col < moduleCount - 6; col += 1) {
+          if (qrcode.isDark(row, col)
+              && !qrcode.isDark(row, col + 1)
+              &&  qrcode.isDark(row, col + 2)
+              &&  qrcode.isDark(row, col + 3)
+              &&  qrcode.isDark(row, col + 4)
+              && !qrcode.isDark(row, col + 5)
+              &&  qrcode.isDark(row, col + 6) ) {
+            lostPoint += 40;
+          }
+        }
+      }
+
+      for (var col = 0; col < moduleCount; col += 1) {
+        for (var row = 0; row < moduleCount - 6; row += 1) {
+          if (qrcode.isDark(row, col)
+              && !qrcode.isDark(row + 1, col)
+              &&  qrcode.isDark(row + 2, col)
+              &&  qrcode.isDark(row + 3, col)
+              &&  qrcode.isDark(row + 4, col)
+              && !qrcode.isDark(row + 5, col)
+              &&  qrcode.isDark(row + 6, col) ) {
+            lostPoint += 40;
+          }
+        }
+      }
+
+      // LEVEL4
+
+      var darkCount = 0;
+
+      for (var col = 0; col < moduleCount; col += 1) {
+        for (var row = 0; row < moduleCount; row += 1) {
+          if (qrcode.isDark(row, col) ) {
+            darkCount += 1;
+          }
+        }
+      }
+
+      var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+      lostPoint += ratio * 10;
+
+      return lostPoint;
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // QRMath
+  //---------------------------------------------------------------------
+
+  var QRMath = function() {
+
+    var EXP_TABLE = new Array(256);
+    var LOG_TABLE = new Array(256);
+
+    // initialize tables
+    for (var i = 0; i < 8; i += 1) {
+      EXP_TABLE[i] = 1 << i;
+    }
+    for (var i = 8; i < 256; i += 1) {
+      EXP_TABLE[i] = EXP_TABLE[i - 4]
+        ^ EXP_TABLE[i - 5]
+        ^ EXP_TABLE[i - 6]
+        ^ EXP_TABLE[i - 8];
+    }
+    for (var i = 0; i < 255; i += 1) {
+      LOG_TABLE[EXP_TABLE[i] ] = i;
+    }
+
+    var _this = {};
+
+    _this.glog = function(n) {
+
+      if (n < 1) {
+        throw 'glog(' + n + ')';
+      }
+
+      return LOG_TABLE[n];
+    };
+
+    _this.gexp = function(n) {
+
+      while (n < 0) {
+        n += 255;
+      }
+
+      while (n >= 256) {
+        n -= 255;
+      }
+
+      return EXP_TABLE[n];
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // qrPolynomial
+  //---------------------------------------------------------------------
+
+  function qrPolynomial(num, shift) {
+
+    if (typeof num.length == 'undefined') {
+      throw num.length + '/' + shift;
+    }
+
+    var _num = function() {
+      var offset = 0;
+      while (offset < num.length && num[offset] == 0) {
+        offset += 1;
+      }
+      var _num = new Array(num.length - offset + shift);
+      for (var i = 0; i < num.length - offset; i += 1) {
+        _num[i] = num[i + offset];
+      }
+      return _num;
+    }();
+
+    var _this = {};
+
+    _this.getAt = function(index) {
+      return _num[index];
+    };
+
+    _this.getLength = function() {
+      return _num.length;
+    };
+
+    _this.multiply = function(e) {
+
+      var num = new Array(_this.getLength() + e.getLength() - 1);
+
+      for (var i = 0; i < _this.getLength(); i += 1) {
+        for (var j = 0; j < e.getLength(); j += 1) {
+          num[i + j] ^= QRMath.gexp(QRMath.glog(_this.getAt(i) ) + QRMath.glog(e.getAt(j) ) );
+        }
+      }
+
+      return qrPolynomial(num, 0);
+    };
+
+    _this.mod = function(e) {
+
+      if (_this.getLength() - e.getLength() < 0) {
+        return _this;
+      }
+
+      var ratio = QRMath.glog(_this.getAt(0) ) - QRMath.glog(e.getAt(0) );
+
+      var num = new Array(_this.getLength() );
+      for (var i = 0; i < _this.getLength(); i += 1) {
+        num[i] = _this.getAt(i);
+      }
+
+      for (var i = 0; i < e.getLength(); i += 1) {
+        num[i] ^= QRMath.gexp(QRMath.glog(e.getAt(i) ) + ratio);
+      }
+
+      // recursive call
+      return qrPolynomial(num, 0).mod(e);
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // QRRSBlock
+  //---------------------------------------------------------------------
+
+  var QRRSBlock = function() {
+
+    var RS_BLOCK_TABLE = [
+
+      // L
+      // M
+      // Q
+      // H
+
+      // 1
+      [1, 26, 19],
+      [1, 26, 16],
+      [1, 26, 13],
+      [1, 26, 9],
+
+      // 2
+      [1, 44, 34],
+      [1, 44, 28],
+      [1, 44, 22],
+      [1, 44, 16],
+
+      // 3
+      [1, 70, 55],
+      [1, 70, 44],
+      [2, 35, 17],
+      [2, 35, 13],
+
+      // 4
+      [1, 100, 80],
+      [2, 50, 32],
+      [2, 50, 24],
+      [4, 25, 9],
+
+      // 5
+      [1, 134, 108],
+      [2, 67, 43],
+      [2, 33, 15, 2, 34, 16],
+      [2, 33, 11, 2, 34, 12],
+
+      // 6
+      [2, 86, 68],
+      [4, 43, 27],
+      [4, 43, 19],
+      [4, 43, 15],
+
+      // 7
+      [2, 98, 78],
+      [4, 49, 31],
+      [2, 32, 14, 4, 33, 15],
+      [4, 39, 13, 1, 40, 14],
+
+      // 8
+      [2, 121, 97],
+      [2, 60, 38, 2, 61, 39],
+      [4, 40, 18, 2, 41, 19],
+      [4, 40, 14, 2, 41, 15],
+
+      // 9
+      [2, 146, 116],
+      [3, 58, 36, 2, 59, 37],
+      [4, 36, 16, 4, 37, 17],
+      [4, 36, 12, 4, 37, 13],
+
+      // 10
+      [2, 86, 68, 2, 87, 69],
+      [4, 69, 43, 1, 70, 44],
+      [6, 43, 19, 2, 44, 20],
+      [6, 43, 15, 2, 44, 16],
+
+      // 11
+      [4, 101, 81],
+      [1, 80, 50, 4, 81, 51],
+      [4, 50, 22, 4, 51, 23],
+      [3, 36, 12, 8, 37, 13],
+
+      // 12
+      [2, 116, 92, 2, 117, 93],
+      [6, 58, 36, 2, 59, 37],
+      [4, 46, 20, 6, 47, 21],
+      [7, 42, 14, 4, 43, 15],
+
+      // 13
+      [4, 133, 107],
+      [8, 59, 37, 1, 60, 38],
+      [8, 44, 20, 4, 45, 21],
+      [12, 33, 11, 4, 34, 12],
+
+      // 14
+      [3, 145, 115, 1, 146, 116],
+      [4, 64, 40, 5, 65, 41],
+      [11, 36, 16, 5, 37, 17],
+      [11, 36, 12, 5, 37, 13],
+
+      // 15
+      [5, 109, 87, 1, 110, 88],
+      [5, 65, 41, 5, 66, 42],
+      [5, 54, 24, 7, 55, 25],
+      [11, 36, 12, 7, 37, 13],
+
+      // 16
+      [5, 122, 98, 1, 123, 99],
+      [7, 73, 45, 3, 74, 46],
+      [15, 43, 19, 2, 44, 20],
+      [3, 45, 15, 13, 46, 16],
+
+      // 17
+      [1, 135, 107, 5, 136, 108],
+      [10, 74, 46, 1, 75, 47],
+      [1, 50, 22, 15, 51, 23],
+      [2, 42, 14, 17, 43, 15],
+
+      // 18
+      [5, 150, 120, 1, 151, 121],
+      [9, 69, 43, 4, 70, 44],
+      [17, 50, 22, 1, 51, 23],
+      [2, 42, 14, 19, 43, 15],
+
+      // 19
+      [3, 141, 113, 4, 142, 114],
+      [3, 70, 44, 11, 71, 45],
+      [17, 47, 21, 4, 48, 22],
+      [9, 39, 13, 16, 40, 14],
+
+      // 20
+      [3, 135, 107, 5, 136, 108],
+      [3, 67, 41, 13, 68, 42],
+      [15, 54, 24, 5, 55, 25],
+      [15, 43, 15, 10, 44, 16],
+
+      // 21
+      [4, 144, 116, 4, 145, 117],
+      [17, 68, 42],
+      [17, 50, 22, 6, 51, 23],
+      [19, 46, 16, 6, 47, 17],
+
+      // 22
+      [2, 139, 111, 7, 140, 112],
+      [17, 74, 46],
+      [7, 54, 24, 16, 55, 25],
+      [34, 37, 13],
+
+      // 23
+      [4, 151, 121, 5, 152, 122],
+      [4, 75, 47, 14, 76, 48],
+      [11, 54, 24, 14, 55, 25],
+      [16, 45, 15, 14, 46, 16],
+
+      // 24
+      [6, 147, 117, 4, 148, 118],
+      [6, 73, 45, 14, 74, 46],
+      [11, 54, 24, 16, 55, 25],
+      [30, 46, 16, 2, 47, 17],
+
+      // 25
+      [8, 132, 106, 4, 133, 107],
+      [8, 75, 47, 13, 76, 48],
+      [7, 54, 24, 22, 55, 25],
+      [22, 45, 15, 13, 46, 16],
+
+      // 26
+      [10, 142, 114, 2, 143, 115],
+      [19, 74, 46, 4, 75, 47],
+      [28, 50, 22, 6, 51, 23],
+      [33, 46, 16, 4, 47, 17],
+
+      // 27
+      [8, 152, 122, 4, 153, 123],
+      [22, 73, 45, 3, 74, 46],
+      [8, 53, 23, 26, 54, 24],
+      [12, 45, 15, 28, 46, 16],
+
+      // 28
+      [3, 147, 117, 10, 148, 118],
+      [3, 73, 45, 23, 74, 46],
+      [4, 54, 24, 31, 55, 25],
+      [11, 45, 15, 31, 46, 16],
+
+      // 29
+      [7, 146, 116, 7, 147, 117],
+      [21, 73, 45, 7, 74, 46],
+      [1, 53, 23, 37, 54, 24],
+      [19, 45, 15, 26, 46, 16],
+
+      // 30
+      [5, 145, 115, 10, 146, 116],
+      [19, 75, 47, 10, 76, 48],
+      [15, 54, 24, 25, 55, 25],
+      [23, 45, 15, 25, 46, 16],
+
+      // 31
+      [13, 145, 115, 3, 146, 116],
+      [2, 74, 46, 29, 75, 47],
+      [42, 54, 24, 1, 55, 25],
+      [23, 45, 15, 28, 46, 16],
+
+      // 32
+      [17, 145, 115],
+      [10, 74, 46, 23, 75, 47],
+      [10, 54, 24, 35, 55, 25],
+      [19, 45, 15, 35, 46, 16],
+
+      // 33
+      [17, 145, 115, 1, 146, 116],
+      [14, 74, 46, 21, 75, 47],
+      [29, 54, 24, 19, 55, 25],
+      [11, 45, 15, 46, 46, 16],
+
+      // 34
+      [13, 145, 115, 6, 146, 116],
+      [14, 74, 46, 23, 75, 47],
+      [44, 54, 24, 7, 55, 25],
+      [59, 46, 16, 1, 47, 17],
+
+      // 35
+      [12, 151, 121, 7, 152, 122],
+      [12, 75, 47, 26, 76, 48],
+      [39, 54, 24, 14, 55, 25],
+      [22, 45, 15, 41, 46, 16],
+
+      // 36
+      [6, 151, 121, 14, 152, 122],
+      [6, 75, 47, 34, 76, 48],
+      [46, 54, 24, 10, 55, 25],
+      [2, 45, 15, 64, 46, 16],
+
+      // 37
+      [17, 152, 122, 4, 153, 123],
+      [29, 74, 46, 14, 75, 47],
+      [49, 54, 24, 10, 55, 25],
+      [24, 45, 15, 46, 46, 16],
+
+      // 38
+      [4, 152, 122, 18, 153, 123],
+      [13, 74, 46, 32, 75, 47],
+      [48, 54, 24, 14, 55, 25],
+      [42, 45, 15, 32, 46, 16],
+
+      // 39
+      [20, 147, 117, 4, 148, 118],
+      [40, 75, 47, 7, 76, 48],
+      [43, 54, 24, 22, 55, 25],
+      [10, 45, 15, 67, 46, 16],
+
+      // 40
+      [19, 148, 118, 6, 149, 119],
+      [18, 75, 47, 31, 76, 48],
+      [34, 54, 24, 34, 55, 25],
+      [20, 45, 15, 61, 46, 16]
+    ];
+
+    var qrRSBlock = function(totalCount, dataCount) {
+      var _this = {};
+      _this.totalCount = totalCount;
+      _this.dataCount = dataCount;
+      return _this;
+    };
+
+    var _this = {};
+
+    var getRsBlockTable = function(typeNumber, errorCorrectionLevel) {
+
+      switch(errorCorrectionLevel) {
+      case QRErrorCorrectionLevel.L :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+      case QRErrorCorrectionLevel.M :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+      case QRErrorCorrectionLevel.Q :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+      case QRErrorCorrectionLevel.H :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+      default :
+        return undefined;
+      }
+    };
+
+    _this.getRSBlocks = function(typeNumber, errorCorrectionLevel) {
+
+      var rsBlock = getRsBlockTable(typeNumber, errorCorrectionLevel);
+
+      if (typeof rsBlock == 'undefined') {
+        throw 'bad rs block @ typeNumber:' + typeNumber +
+            '/errorCorrectionLevel:' + errorCorrectionLevel;
+      }
+
+      var length = rsBlock.length / 3;
+
+      var list = [];
+
+      for (var i = 0; i < length; i += 1) {
+
+        var count = rsBlock[i * 3 + 0];
+        var totalCount = rsBlock[i * 3 + 1];
+        var dataCount = rsBlock[i * 3 + 2];
+
+        for (var j = 0; j < count; j += 1) {
+          list.push(qrRSBlock(totalCount, dataCount) );
+        }
+      }
+
+      return list;
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // qrBitBuffer
+  //---------------------------------------------------------------------
+
+  var qrBitBuffer = function() {
+
+    var _buffer = [];
+    var _length = 0;
+
+    var _this = {};
+
+    _this.getBuffer = function() {
+      return _buffer;
+    };
+
+    _this.getAt = function(index) {
+      var bufIndex = Math.floor(index / 8);
+      return ( (_buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
+    };
+
+    _this.put = function(num, length) {
+      for (var i = 0; i < length; i += 1) {
+        _this.putBit( ( (num >>> (length - i - 1) ) & 1) == 1);
+      }
+    };
+
+    _this.getLengthInBits = function() {
+      return _length;
+    };
+
+    _this.putBit = function(bit) {
+
+      var bufIndex = Math.floor(_length / 8);
+      if (_buffer.length <= bufIndex) {
+        _buffer.push(0);
+      }
+
+      if (bit) {
+        _buffer[bufIndex] |= (0x80 >>> (_length % 8) );
+      }
+
+      _length += 1;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrNumber
+  //---------------------------------------------------------------------
+
+  var qrNumber = function(data) {
+
+    var _mode = QRMode.MODE_NUMBER;
+    var _data = data;
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _data.length;
+    };
+
+    _this.write = function(buffer) {
+
+      var data = _data;
+
+      var i = 0;
+
+      while (i + 2 < data.length) {
+        buffer.put(strToNum(data.substring(i, i + 3) ), 10);
+        i += 3;
+      }
+
+      if (i < data.length) {
+        if (data.length - i == 1) {
+          buffer.put(strToNum(data.substring(i, i + 1) ), 4);
+        } else if (data.length - i == 2) {
+          buffer.put(strToNum(data.substring(i, i + 2) ), 7);
+        }
+      }
+    };
+
+    var strToNum = function(s) {
+      var num = 0;
+      for (var i = 0; i < s.length; i += 1) {
+        num = num * 10 + chatToNum(s.charAt(i) );
+      }
+      return num;
+    };
+
+    var chatToNum = function(c) {
+      if ('0' <= c && c <= '9') {
+        return c.charCodeAt(0) - '0'.charCodeAt(0);
+      }
+      throw 'illegal char :' + c;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrAlphaNum
+  //---------------------------------------------------------------------
+
+  var qrAlphaNum = function(data) {
+
+    var _mode = QRMode.MODE_ALPHA_NUM;
+    var _data = data;
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _data.length;
+    };
+
+    _this.write = function(buffer) {
+
+      var s = _data;
+
+      var i = 0;
+
+      while (i + 1 < s.length) {
+        buffer.put(
+          getCode(s.charAt(i) ) * 45 +
+          getCode(s.charAt(i + 1) ), 11);
+        i += 2;
+      }
+
+      if (i < s.length) {
+        buffer.put(getCode(s.charAt(i) ), 6);
+      }
+    };
+
+    var getCode = function(c) {
+
+      if ('0' <= c && c <= '9') {
+        return c.charCodeAt(0) - '0'.charCodeAt(0);
+      } else if ('A' <= c && c <= 'Z') {
+        return c.charCodeAt(0) - 'A'.charCodeAt(0) + 10;
+      } else {
+        switch (c) {
+        case ' ' : return 36;
+        case '$' : return 37;
+        case '%' : return 38;
+        case '*' : return 39;
+        case '+' : return 40;
+        case '-' : return 41;
+        case '.' : return 42;
+        case '/' : return 43;
+        case ':' : return 44;
+        default :
+          throw 'illegal char :' + c;
+        }
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qr8BitByte
+  //---------------------------------------------------------------------
+
+  var qr8BitByte = function(data) {
+
+    var _mode = QRMode.MODE_8BIT_BYTE;
+    var _data = data;
+    var _bytes = qrcode.stringToBytes(data);
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _bytes.length;
+    };
+
+    _this.write = function(buffer) {
+      for (var i = 0; i < _bytes.length; i += 1) {
+        buffer.put(_bytes[i], 8);
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrKanji
+  //---------------------------------------------------------------------
+
+  var qrKanji = function(data) {
+
+    var _mode = QRMode.MODE_KANJI;
+    var _data = data;
+
+    var stringToBytes = qrcode.stringToBytesFuncs['SJIS'];
+    if (!stringToBytes) {
+      throw 'sjis not supported.';
+    }
+    !function(c, code) {
+      // self test for sjis support.
+      var test = stringToBytes(c);
+      if (test.length != 2 || ( (test[0] << 8) | test[1]) != code) {
+        throw 'sjis not supported.';
+      }
+    }('\u53cb', 0x9746);
+
+    var _bytes = stringToBytes(data);
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return ~~(_bytes.length / 2);
+    };
+
+    _this.write = function(buffer) {
+
+      var data = _bytes;
+
+      var i = 0;
+
+      while (i + 1 < data.length) {
+
+        var c = ( (0xff & data[i]) << 8) | (0xff & data[i + 1]);
+
+        if (0x8140 <= c && c <= 0x9FFC) {
+          c -= 0x8140;
+        } else if (0xE040 <= c && c <= 0xEBBF) {
+          c -= 0xC140;
+        } else {
+          throw 'illegal char at ' + (i + 1) + '/' + c;
+        }
+
+        c = ( (c >>> 8) & 0xff) * 0xC0 + (c & 0xff);
+
+        buffer.put(c, 13);
+
+        i += 2;
+      }
+
+      if (i < data.length) {
+        throw 'illegal char at ' + (i + 1);
+      }
+    };
+
+    return _this;
+  };
+
+  //=====================================================================
+  // GIF Support etc.
+  //
+
+  //---------------------------------------------------------------------
+  // byteArrayOutputStream
+  //---------------------------------------------------------------------
+
+  var byteArrayOutputStream = function() {
+
+    var _bytes = [];
+
+    var _this = {};
+
+    _this.writeByte = function(b) {
+      _bytes.push(b & 0xff);
+    };
+
+    _this.writeShort = function(i) {
+      _this.writeByte(i);
+      _this.writeByte(i >>> 8);
+    };
+
+    _this.writeBytes = function(b, off, len) {
+      off = off || 0;
+      len = len || b.length;
+      for (var i = 0; i < len; i += 1) {
+        _this.writeByte(b[i + off]);
+      }
+    };
+
+    _this.writeString = function(s) {
+      for (var i = 0; i < s.length; i += 1) {
+        _this.writeByte(s.charCodeAt(i) );
+      }
+    };
+
+    _this.toByteArray = function() {
+      return _bytes;
+    };
+
+    _this.toString = function() {
+      var s = '';
+      s += '[';
+      for (var i = 0; i < _bytes.length; i += 1) {
+        if (i > 0) {
+          s += ',';
+        }
+        s += _bytes[i];
+      }
+      s += ']';
+      return s;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // base64EncodeOutputStream
+  //---------------------------------------------------------------------
+
+  var base64EncodeOutputStream = function() {
+
+    var _buffer = 0;
+    var _buflen = 0;
+    var _length = 0;
+    var _base64 = '';
+
+    var _this = {};
+
+    var writeEncoded = function(b) {
+      _base64 += String.fromCharCode(encode(b & 0x3f) );
+    };
+
+    var encode = function(n) {
+      if (n < 0) {
+        // error.
+      } else if (n < 26) {
+        return 0x41 + n;
+      } else if (n < 52) {
+        return 0x61 + (n - 26);
+      } else if (n < 62) {
+        return 0x30 + (n - 52);
+      } else if (n == 62) {
+        return 0x2b;
+      } else if (n == 63) {
+        return 0x2f;
+      }
+      throw 'n:' + n;
+    };
+
+    _this.writeByte = function(n) {
+
+      _buffer = (_buffer << 8) | (n & 0xff);
+      _buflen += 8;
+      _length += 1;
+
+      while (_buflen >= 6) {
+        writeEncoded(_buffer >>> (_buflen - 6) );
+        _buflen -= 6;
+      }
+    };
+
+    _this.flush = function() {
+
+      if (_buflen > 0) {
+        writeEncoded(_buffer << (6 - _buflen) );
+        _buffer = 0;
+        _buflen = 0;
+      }
+
+      if (_length % 3 != 0) {
+        // padding
+        var padlen = 3 - _length % 3;
+        for (var i = 0; i < padlen; i += 1) {
+          _base64 += '=';
+        }
+      }
+    };
+
+    _this.toString = function() {
+      return _base64;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // base64DecodeInputStream
+  //---------------------------------------------------------------------
+
+  var base64DecodeInputStream = function(str) {
+
+    var _str = str;
+    var _pos = 0;
+    var _buffer = 0;
+    var _buflen = 0;
+
+    var _this = {};
+
+    _this.read = function() {
+
+      while (_buflen < 8) {
+
+        if (_pos >= _str.length) {
+          if (_buflen == 0) {
+            return -1;
+          }
+          throw 'unexpected end of file./' + _buflen;
+        }
+
+        var c = _str.charAt(_pos);
+        _pos += 1;
+
+        if (c == '=') {
+          _buflen = 0;
+          return -1;
+        } else if (c.match(/^\s$/) ) {
+          // ignore if whitespace.
+          continue;
+        }
+
+        _buffer = (_buffer << 6) | decode(c.charCodeAt(0) );
+        _buflen += 6;
+      }
+
+      var n = (_buffer >>> (_buflen - 8) ) & 0xff;
+      _buflen -= 8;
+      return n;
+    };
+
+    var decode = function(c) {
+      if (0x41 <= c && c <= 0x5a) {
+        return c - 0x41;
+      } else if (0x61 <= c && c <= 0x7a) {
+        return c - 0x61 + 26;
+      } else if (0x30 <= c && c <= 0x39) {
+        return c - 0x30 + 52;
+      } else if (c == 0x2b) {
+        return 62;
+      } else if (c == 0x2f) {
+        return 63;
+      } else {
+        throw 'c:' + c;
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // gifImage (B/W)
+  //---------------------------------------------------------------------
+
+  var gifImage = function(width, height) {
+
+    var _width = width;
+    var _height = height;
+    var _data = new Array(width * height);
+
+    var _this = {};
+
+    _this.setPixel = function(x, y, pixel) {
+      _data[y * _width + x] = pixel;
+    };
+
+    _this.write = function(out) {
+
+      //---------------------------------
+      // GIF Signature
+
+      out.writeString('GIF87a');
+
+      //---------------------------------
+      // Screen Descriptor
+
+      out.writeShort(_width);
+      out.writeShort(_height);
+
+      out.writeByte(0x80); // 2bit
+      out.writeByte(0);
+      out.writeByte(0);
+
+      //---------------------------------
+      // Global Color Map
+
+      // black
+      out.writeByte(0x00);
+      out.writeByte(0x00);
+      out.writeByte(0x00);
+
+      // white
+      out.writeByte(0xff);
+      out.writeByte(0xff);
+      out.writeByte(0xff);
+
+      //---------------------------------
+      // Image Descriptor
+
+      out.writeString(',');
+      out.writeShort(0);
+      out.writeShort(0);
+      out.writeShort(_width);
+      out.writeShort(_height);
+      out.writeByte(0);
+
+      //---------------------------------
+      // Local Color Map
+
+      //---------------------------------
+      // Raster Data
+
+      var lzwMinCodeSize = 2;
+      var raster = getLZWRaster(lzwMinCodeSize);
+
+      out.writeByte(lzwMinCodeSize);
+
+      var offset = 0;
+
+      while (raster.length - offset > 255) {
+        out.writeByte(255);
+        out.writeBytes(raster, offset, 255);
+        offset += 255;
+      }
+
+      out.writeByte(raster.length - offset);
+      out.writeBytes(raster, offset, raster.length - offset);
+      out.writeByte(0x00);
+
+      //---------------------------------
+      // GIF Terminator
+      out.writeString(';');
+    };
+
+    var bitOutputStream = function(out) {
+
+      var _out = out;
+      var _bitLength = 0;
+      var _bitBuffer = 0;
+
+      var _this = {};
+
+      _this.write = function(data, length) {
+
+        if ( (data >>> length) != 0) {
+          throw 'length over';
+        }
+
+        while (_bitLength + length >= 8) {
+          _out.writeByte(0xff & ( (data << _bitLength) | _bitBuffer) );
+          length -= (8 - _bitLength);
+          data >>>= (8 - _bitLength);
+          _bitBuffer = 0;
+          _bitLength = 0;
+        }
+
+        _bitBuffer = (data << _bitLength) | _bitBuffer;
+        _bitLength = _bitLength + length;
+      };
+
+      _this.flush = function() {
+        if (_bitLength > 0) {
+          _out.writeByte(_bitBuffer);
+        }
+      };
+
+      return _this;
+    };
+
+    var getLZWRaster = function(lzwMinCodeSize) {
+
+      var clearCode = 1 << lzwMinCodeSize;
+      var endCode = (1 << lzwMinCodeSize) + 1;
+      var bitLength = lzwMinCodeSize + 1;
+
+      // Setup LZWTable
+      var table = lzwTable();
+
+      for (var i = 0; i < clearCode; i += 1) {
+        table.add(String.fromCharCode(i) );
+      }
+      table.add(String.fromCharCode(clearCode) );
+      table.add(String.fromCharCode(endCode) );
+
+      var byteOut = byteArrayOutputStream();
+      var bitOut = bitOutputStream(byteOut);
+
+      // clear code
+      bitOut.write(clearCode, bitLength);
+
+      var dataIndex = 0;
+
+      var s = String.fromCharCode(_data[dataIndex]);
+      dataIndex += 1;
+
+      while (dataIndex < _data.length) {
+
+        var c = String.fromCharCode(_data[dataIndex]);
+        dataIndex += 1;
+
+        if (table.contains(s + c) ) {
+
+          s = s + c;
+
+        } else {
+
+          bitOut.write(table.indexOf(s), bitLength);
+
+          if (table.size() < 0xfff) {
+
+            if (table.size() == (1 << bitLength) ) {
+              bitLength += 1;
+            }
+
+            table.add(s + c);
+          }
+
+          s = c;
+        }
+      }
+
+      bitOut.write(table.indexOf(s), bitLength);
+
+      // end code
+      bitOut.write(endCode, bitLength);
+
+      bitOut.flush();
+
+      return byteOut.toByteArray();
+    };
+
+    var lzwTable = function() {
+
+      var _map = {};
+      var _size = 0;
+
+      var _this = {};
+
+      _this.add = function(key) {
+        if (_this.contains(key) ) {
+          throw 'dup key:' + key;
+        }
+        _map[key] = _size;
+        _size += 1;
+      };
+
+      _this.size = function() {
+        return _size;
+      };
+
+      _this.indexOf = function(key) {
+        return _map[key];
+      };
+
+      _this.contains = function(key) {
+        return typeof _map[key] != 'undefined';
+      };
+
+      return _this;
+    };
+
+    return _this;
+  };
+
+  var createDataURL = function(width, height, getPixel) {
+    var gif = gifImage(width, height);
+    for (var y = 0; y < height; y += 1) {
+      for (var x = 0; x < width; x += 1) {
+        gif.setPixel(x, y, getPixel(x, y) );
+      }
+    }
+
+    var b = byteArrayOutputStream();
+    gif.write(b);
+
+    var base64 = base64EncodeOutputStream();
+    var bytes = b.toByteArray();
+    for (var i = 0; i < bytes.length; i += 1) {
+      base64.writeByte(bytes[i]);
+    }
+    base64.flush();
+
+    return 'data:image/gif;base64,' + base64;
+  };
+
+  //---------------------------------------------------------------------
+  // returns qrcode function.
+
+  return qrcode;
+}();
+
+// multibyte support
+!function() {
+
+  qrcode.stringToBytesFuncs['UTF-8'] = function(s) {
+    // http://stackoverflow.com/questions/18729405/how-to-convert-utf8-string-to-byte-array
+    function toUTF8Array(str) {
+      var utf8 = [];
+      for (var i=0; i < str.length; i++) {
+        var charcode = str.charCodeAt(i);
+        if (charcode < 0x80) utf8.push(charcode);
+        else if (charcode < 0x800) {
+          utf8.push(0xc0 | (charcode >> 6),
+              0x80 | (charcode & 0x3f));
+        }
+        else if (charcode < 0xd800 || charcode >= 0xe000) {
+          utf8.push(0xe0 | (charcode >> 12),
+              0x80 | ((charcode>>6) & 0x3f),
+              0x80 | (charcode & 0x3f));
+        }
+        // surrogate pair
+        else {
+          i++;
+          // UTF-16 encodes 0x10000-0x10FFFF by
+          // subtracting 0x10000 and splitting the
+          // 20 bits of 0x0-0xFFFFF into two halves
+          charcode = 0x10000 + (((charcode & 0x3ff)<<10)
+            | (str.charCodeAt(i) & 0x3ff));
+          utf8.push(0xf0 | (charcode >>18),
+              0x80 | ((charcode>>12) & 0x3f),
+              0x80 | ((charcode>>6) & 0x3f),
+              0x80 | (charcode & 0x3f));
+        }
+      }
+      return utf8;
+    }
+    return toUTF8Array(s);
+  };
+
+}();
+
+(function (factory) {
+  if (typeof define === 'function' && define.amd) {
+      define([], factory);
+  } else if (typeof exports === 'object') {
+      module.exports = factory();
+  }
+}(function () {
+    return qrcode;
+}));
+
+
+</script>
+<script>
+/* ===== Núcleo compartido: masas, fórmulas, generador por matrícula y verificación ===== */
+const ACT={id:'ESTEQ-T5',ver:'v1',salt:'CEUX·BIO·ESTEQ·T5·2026·TH',parts:16,NA:6.022e23};
+
+function cyrb53(str,seed){seed=seed||0;let h1=0xdeadbeef^seed,h2=0x41c6ce57^seed;
+  for(let i=0,ch;i<str.length;i++){ch=str.charCodeAt(i);h1=Math.imul(h1^ch,2654435761);h2=Math.imul(h2^ch,1597334677);}
+  h1=Math.imul(h1^(h1>>>16),2246822507);h1^=Math.imul(h2^(h2>>>13),3266489909);
+  h2=Math.imul(h2^(h2>>>16),2246822507);h2^=Math.imul(h1^(h1>>>13),3266489909);
+  return 4294967296*(2097151&h2)+(h1>>>0);}
+const norm=v=>String(v||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toUpperCase().replace(/\s+/g,' ').trim();
+const normMat=m=>String(m||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+const seedOf=m=>cyrb53(normMat(m)+'|'+ACT.salt,11)%4294967296;
+const verOf=m=>seedOf(m).toString(36).toUpperCase().slice(-4).padStart(4,'0');
+function code8(str){const c=cyrb53(str+'|'+ACT.salt,7).toString(36).toUpperCase().padStart(11,'0').slice(-8);return c.slice(0,4)+'-'+c.slice(4);}
+const sumStr=d=>[ACT.ver,norm(d.n),normMat(d.m),norm(d.g),String(d.t0).trim(),String(d.t1).trim(),+d.act,+d.tot,+d.out,+d.sal,+d.pg,+d.rc,+d.fs,String(d.r),String(d.ver)].join('|');
+const b64e=s=>btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const b64d=s=>{s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';return decodeURIComponent(escape(atob(s)));};
+const esc=v=>String(v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- Masas atómicas (uma), 2 decimales; base: IUPAC (Prohaska et al., 2022) ---------- */
+const MASAS={H:1.01,C:12.01,N:14.01,O:16.00,Na:22.99,Mg:24.31,Al:26.98,P:30.97,S:32.07,Cl:35.45,K:39.10,Ca:40.08,Mn:54.94,Fe:55.85,Co:58.93,Cu:63.55,Br:79.90};
+const ZNUM={H:1,C:6,N:7,O:8,Na:11,Mg:12,Al:13,P:15,S:16,Cl:17,K:19,Ca:20,Mn:25,Fe:26,Co:27,Cu:29,Br:35,Hg:80};
+const ELNOM={H:'hidrógeno',C:'carbono',N:'nitrógeno',O:'oxígeno',Na:'sodio',Mg:'magnesio',Al:'aluminio',P:'fósforo',S:'azufre',Cl:'cloro',K:'potasio',Ca:'calcio',Mn:'manganeso',Fe:'hierro',Co:'cobalto',Cu:'cobre',Br:'bromo',Hg:'mercurio'};
+const ESTADO={s:'sólido',l:'líquido',g:'gas',aq:'disolución acuosa'};
+
+/* ---------- Fórmulas ---------- */
+function parseF(f){let i=0;
+  const num=()=>{let s='';while(i<f.length&&/\d/.test(f[i]))s+=f[i++];return s?+s:1;};
+  function group(){const m={},order=[];const add=(e,c)=>{if(!(e in m)){m[e]=0;order.push(e);}m[e]+=c;};
+    while(i<f.length&&f[i]!==')'){
+      if(f[i]==='('){i++;const g=group();i++;const n=num();g.forEach(([e,c])=>add(e,c*n));}
+      else{let e=f[i++];while(i<f.length&&/[a-z]/.test(f[i]))e+=f[i++];add(e,num());}}
+    return order.map(e=>[e,m[e]]);}
+  return group();}
+const fmtF=f=>f.replace(/(\d+)/g,'<sub>$1</sub>');
+const SUBD='₀₁₂₃₄₅₆₇₈₉';
+const uniF=f=>f.replace(/\d/g,d=>SUBD[d]);
+const MM=f=>parseF(f).reduce((s,[e,n])=>s+n*MASAS[e],0);
+const cnt=(f,e)=>{const x=parseF(f).find(p=>p[0]===e);return x?x[1]:0;};
+
+/* ---------- Números ---------- */
+const fx=(v,d)=>Number(v).toFixed(d);
+function sig(v,n){n=n||4;if(v===0)return'0';const e=Math.floor(Math.log10(Math.abs(v)));
+  if(e>=6||e<=-4){let m=v/Math.pow(10,e);let mm=m.toFixed(n-1);if(Math.abs(+mm)>=10){mm=(m/10).toFixed(n-1);return mm+' × 10<sup>'+(e+1)+'</sup>';}return mm+' × 10<sup>'+e+'</sup>';}
+  return String(Number(v.toPrecision(n)));}
+function sigTxt(v,n){return sig(v,n).replace(' × 10<sup>','e').replace('</sup>','');}
+function parseNum(s){s=String(s||'').trim().replace(/\s+/g,'').replace(/,/g,'.').replace(/−/g,'-');
+  if(!s)return NaN;
+  s=s.replace(/[x×*·]10\^?\(?([+\-]?\d+)\)?$/i,'e$1');
+  if(!/^[+\-]?(\d+\.?\d*|\.\d+)(e[+\-]?\d+)?$/i.test(s))return NaN;return Number(s);}
+
+/* ---------- Bancos ---------- */
+const IONICOS=[['CaCl2','cloruro de calcio'],['Na2CO3','carbonato de sodio'],['Al2(SO4)3','sulfato de aluminio'],['Mg(OH)2','hidróxido de magnesio'],['KNO3','nitrato de potasio'],['Ca3(PO4)2','fosfato de calcio'],['Fe2O3','óxido de hierro(III)'],['CuSO4','sulfato de cobre(II)'],['NaHCO3','bicarbonato de sodio'],['K2SO4','sulfato de potasio'],['Ca(NO3)2','nitrato de calcio'],['(NH4)2SO4','sulfato de amonio'],['MgSO4','sulfato de magnesio'],['KMnO4','permanganato de potasio'],['CaCO3','carbonato de calcio'],['Na3PO4','fosfato de sodio'],['FeCl3','cloruro de hierro(III)'],['MgCl2','cloruro de magnesio']];
+const MOLECULARES=[['C6H12O6','glucosa'],['C12H22O11','sacarosa'],['C2H5OH','etanol'],['C3H6O3','ácido láctico'],['CO(NH2)2','urea'],['C2H5NO2','glicina'],['C8H10N4O2','cafeína'],['C9H8O4','aspirina (ácido acetilsalicílico)'],['C3H8O3','glicerol'],['C6H8O7','ácido cítrico'],['C5H5N5','adenina'],['C4H4N2O2','uracilo'],['C6H8O6','ácido ascórbico (vitamina C)'],['CH3COOH','ácido acético'],['C3H7NO2','alanina'],['C27H46O','colesterol']];
+const ATOMOS=['Ca(NO3)2','Al2(SO4)3','Ca3(PO4)2','Mg(OH)2','(NH4)2SO4','Fe2(SO4)3','Cu(NO3)2','(NH4)3PO4','Al(OH)3','C6H12O6','C12H22O11','Ca(HCO3)2','Mg3(PO4)2','Fe(NO3)3'];
+const E=(r,p,t)=>({r,p,t});
+const ECUACIONES=[
+ E([[1,'N2','g'],[3,'H2','g']],[[2,'NH3','g']],'comb'),
+ E([[2,'Mg','s'],[1,'O2','g']],[[2,'MgO','s']],'comb'),
+ E([[1,'C3H6','g'],[1,'Br2','l']],[[1,'C3H6Br2','l']],'comb'),
+ E([[2,'Na','s'],[1,'Cl2','g']],[[2,'NaCl','s']],'comb'),
+ E([[1,'CaO','s'],[1,'H2O','l']],[[1,'Ca(OH)2','s']],'comb'),
+ E([[4,'Fe','s'],[3,'O2','g']],[[2,'Fe2O3','s']],'comb'),
+ E([[1,'SO3','g'],[1,'H2O','l']],[[1,'H2SO4','aq']],'comb'),
+ E([[4,'Al','s'],[3,'O2','g']],[[2,'Al2O3','s']],'comb'),
+ E([[1,'NH3','g'],[1,'HCl','g']],[[1,'NH4Cl','s']],'comb'),
+ E([[1,'CO2','g'],[1,'H2O','l']],[[1,'H2CO3','aq']],'comb'),
+ E([[1,'CaCO3','s']],[[1,'CaO','s'],[1,'CO2','g']],'desc'),
+ E([[2,'KClO3','s']],[[2,'KCl','s'],[3,'O2','g']],'desc'),
+ E([[2,'NaN3','s']],[[2,'Na','s'],[3,'N2','g']],'desc'),
+ E([[2,'H2O2','aq']],[[2,'H2O','l'],[1,'O2','g']],'desc'),
+ E([[2,'NaHCO3','s']],[[1,'Na2CO3','s'],[1,'H2O','g'],[1,'CO2','g']],'desc'),
+ E([[1,'Cu(OH)2','s']],[[1,'CuO','s'],[1,'H2O','l']],'desc'),
+ E([[2,'H2O','l']],[[2,'H2','g'],[1,'O2','g']],'desc'),
+ E([[1,'NH4Cl','s']],[[1,'NH3','g'],[1,'HCl','g']],'desc'),
+ E([[2,'HgO','s']],[[2,'Hg','l'],[1,'O2','g']],'desc'),
+ E([[1,'MgCO3','s']],[[1,'MgO','s'],[1,'CO2','g']],'desc'),
+ E([[1,'CH4','g'],[2,'O2','g']],[[1,'CO2','g'],[2,'H2O','g']],'cmb'),
+ E([[1,'C3H8','g'],[5,'O2','g']],[[3,'CO2','g'],[4,'H2O','g']],'cmb'),
+ E([[1,'C2H5OH','l'],[3,'O2','g']],[[2,'CO2','g'],[3,'H2O','g']],'cmb'),
+ E([[1,'C6H12O6','s'],[6,'O2','g']],[[6,'CO2','g'],[6,'H2O','l']],'cmb'),
+ E([[2,'C2H6','g'],[7,'O2','g']],[[4,'CO2','g'],[6,'H2O','g']],'cmb'),
+ E([[2,'C8H18','l'],[25,'O2','g']],[[16,'CO2','g'],[18,'H2O','g']],'cmb'),
+ E([[2,'CH3OH','l'],[3,'O2','g']],[[2,'CO2','g'],[4,'H2O','g']],'cmb'),
+ E([[1,'C12H22O11','s'],[12,'O2','g']],[[12,'CO2','g'],[11,'H2O','l']],'cmb'),
+ E([[2,'C4H10','g'],[13,'O2','g']],[[8,'CO2','g'],[10,'H2O','g']],'cmb'),
+ E([[1,'C2H4','g'],[3,'O2','g']],[[2,'CO2','g'],[2,'H2O','g']],'cmb')];
+const TIPO={comb:'Combinación',desc:'Descomposición',cmb:'Combustión'};
+const TIPO_EXP={comb:'dos o más sustancias se unen para formar un solo producto',desc:'una sola sustancia se separa en dos o más sustancias',cmb:'una sustancia (casi siempre un hidrocarburo o compuesto con C, H y O) reacciona rápidamente con O₂ y produce CO₂ y H₂O'};
+const EMP_PCT=[['CH2O','Es la fórmula empírica del formaldehído y también de la glucosa (C₆H₁₂O₆).'],['C3H4O3','Es la fórmula empírica del ácido ascórbico (vitamina C, C₆H₈O₆).'],['C3O2','Es el subóxido de carbono (Goldberg, 2005, ej. 7.12).'],['Na2S2O3','Es el tiosulfato de sodio (Goldberg, 2005, ej. 7.13).'],['FeSO4','Es el sulfato de hierro(II).'],['Co2O3','Es el óxido de cobalto(III).'],['MnO2','Es el óxido de manganeso(IV).'],['Al2S3','Es el sulfuro de aluminio.'],['N2O5','Es el pentóxido de dinitrógeno.'],['C2H6O','Es la fórmula del etanol.'],['C4H5N2O','Es la fórmula empírica de la cafeína (C₈H₁₀N₄O₂).'],['C2H3','Corresponde, por ejemplo, al C₈H₁₂ (Goldberg, 2005, prob. 7.68).'],['P2O5','Es la fórmula empírica del decóxido de tetrafósforo (P₄O₁₀).'],['C5H7N','Es la fórmula empírica de la nicotina (C₁₀H₁₄N₂).'],['KClO3','Es el clorato de potasio.']];
+const EMP_MAS=[['Fe3O4','magnetita, un óxido de hierro (Goldberg, 2005, ej. 7.14)'],['Fe2O3','un óxido de hierro'],['Cu2O','un óxido de cobre'],['Al2O3','un óxido de aluminio'],['Mg3N2','un nitruro de magnesio'],['P2O5','un óxido de fósforo'],['CaCl2','un cloruro de calcio'],['Na2O','un óxido de sodio'],['SO3','un óxido de azufre'],['K2S','un sulfuro de potasio'],['CuCl2','un cloruro de cobre']];
+
+/* ---------- Ecuaciones (HTML) ---------- */
+const sp=(c,f,s)=>(c>1?'<b class="cf">'+c+'</b>&#8239;':'')+fmtF(f)+'<span class="st">('+s+')</span>';
+const eqHTML=q=>'<div class="eq">'+q.r.map(x=>sp(...x)).join(' + ')+' <span class="ar">⟶</span> '+q.p.map(x=>sp(...x)).join(' + ')+'</div>';
+
+/* ---------- Generador por matrícula ---------- */
+function genItems(mat){
+  const R=mulberry32(seedOf(mat));
+  const pick=a=>a[Math.floor(R()*a.length)];
+  const int=(a,b)=>a+Math.floor(R()*(b-a+1));
+  const real=(a,b,d)=>Number((a+R()*(b-a)).toFixed(d));
+  const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(R()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+  const used=new Set(),usedEq=new Set(),els=new Set();
+  const take=bank=>{let c,g=0;do{c=pick(bank);g++;}while(used.has(c[0])&&g<200);used.add(c[0]);return c;};
+  const takeEq=fil=>{const pool=ECUACIONES.map((q,i)=>i).filter(i=>!usedEq.has(i)&&fil(ECUACIONES[i]));const i=pick(pool);usedEq.add(i);return ECUACIONES[i];};
+  const useEls=f=>parseF(f).forEach(([e])=>els.add(e));
+  const r2=v=>Math.round(v*100)/100;
+  const pfLines=f=>parseF(f).map(([e,n])=>`${e}: ${n} × ${fx(MASAS[e],2)} = ${fx(n*MASAS[e],2)}`).join('<br>');
+  const items=[];
+  const NUMFMT='Escribe solo el número, con punto decimal. Ejemplo de formato: ';
+  /* 1 · Conservación de la masa */
+  {const v=int(0,3);let st,ans,sol,eq;
+    if(v===0){const a=real(20,80,2),b=r2(a*MM('CaO')/MM('CaCO3'));ans=r2(a-b);eq=ECUACIONES[10];
+      st=`Al calentar <b>${fx(a,2)} g</b> de carbonato de calcio (CaCO<sub>3</sub>) se obtienen <b>${fx(b,2)} g</b> de óxido de calcio (CaO) y se libera dióxido de carbono:${eqHTML(eq)}¿Cuántos gramos de CO<sub>2</sub> se liberaron?`;
+      sol=`Masa de reactivos = masa de productos.<br>${fx(a,2)} g = ${fx(b,2)} g + <i>m</i>(CO<sub>2</sub>) ⇒ <i>m</i>(CO<sub>2</sub>) = ${fx(a,2)} − ${fx(b,2)} = <b>${fx(ans,2)} g</b>`;}
+    else if(v===1){const a=real(2,30,2),c=r2(a*MM('MgO')/MM('Mg'));ans=r2(c-a);eq=ECUACIONES[1];
+      st=`Se queman <b>${fx(a,2)} g</b> de magnesio en aire y se forman <b>${fx(c,2)} g</b> de óxido de magnesio:${eqHTML(eq)}¿Cuántos gramos de O<sub>2</sub> reaccionaron?`;
+      sol=`${fx(a,2)} g + <i>m</i>(O<sub>2</sub>) = ${fx(c,2)} g ⇒ <i>m</i>(O<sub>2</sub>) = ${fx(c,2)} − ${fx(a,2)} = <b>${fx(ans,2)} g</b>`;}
+    else if(v===2){const a=real(10,60,2),b=r2(a*MM('O2')/(2*MM('H2O2')));ans=r2(a-b);eq=ECUACIONES[13];
+      st=`Se descomponen por completo <b>${fx(a,2)} g</b> de peróxido de hidrógeno y se recogen <b>${fx(b,2)} g</b> de oxígeno:${eqHTML(eq)}¿Cuántos gramos de agua se formaron?`;
+      sol=`${fx(a,2)} g = <i>m</i>(H<sub>2</sub>O) + ${fx(b,2)} g ⇒ <i>m</i>(H<sub>2</sub>O) = ${fx(a,2)} − ${fx(b,2)} = <b>${fx(ans,2)} g</b>`;}
+    else{const a=real(4,40,2),b=r2(a*2*MM('O2')/MM('CH4')),c=r2(a*MM('CO2')/MM('CH4'));ans=r2(a+b-c);eq=ECUACIONES[20];
+      st=`En la combustión completa de <b>${fx(a,2)} g</b> de metano se consumen <b>${fx(b,2)} g</b> de oxígeno y se forman <b>${fx(c,2)} g</b> de dióxido de carbono:${eqHTML(eq)}¿Cuántos gramos de agua se formaron?`;
+      sol=`${fx(a,2)} g + ${fx(b,2)} g = ${fx(c,2)} g + <i>m</i>(H<sub>2</sub>O) ⇒ <i>m</i>(H<sub>2</sub>O) = ${fx(a+b,2)} − ${fx(c,2)} = <b>${fx(ans,2)} g</b>`;}
+    usedEq.add(ECUACIONES.indexOf(eq));
+    items.push({n:1,blk:0,title:'Ley de conservación de la masa',stmt:st,sol,hint:'La masa total de los reactivos es igual a la masa total de los productos.',
+      parts:[{type:'num',ans,tol:{rel:.01,abs:.02},unit:'g',fmt:NUMFMT+'12.35'}]});}
+  /* 2 · Anatomía de la ecuación */
+  {const q=takeEq(q=>q.r.concat(q.p).some(x=>x[0]>1));const v=int(0,2);let st,opts,sol;
+    const names=a=>a.map(x=>fmtF(x[1])).join(', ');
+    if(v===0){const cand=[[names(q.r),1],[names(q.p),0],[fmtF(q.r[0][1])+', '+fmtF(q.p[q.p.length-1][1]),0],[names(q.r.concat(q.p)),0]];
+      const seen=new Set();opts=cand.filter(c=>!seen.has(c[0])&&seen.add(c[0]));
+      st=`En la siguiente ecuación química, ¿cuáles sustancias son los <b>reactivos</b>?${eqHTML(q)}`;
+      sol=`Los reactivos se escriben a la <b>izquierda</b> de la flecha: ${names(q.r)}. Los productos van a la derecha: ${names(q.p)}.`;}
+    else if(v===1){const x=pick(q.r.concat(q.p));opts=Object.keys(ESTADO).map(k=>['Que '+fmtF(x[1])+' está en estado <b>'+ESTADO[k]+'</b>',k===x[2]?1:0]);
+      st=`En la ecuación siguiente, ¿qué indica el símbolo <b>(${x[2]})</b> escrito a la derecha de ${fmtF(x[1])}?${eqHTML(q)}`;
+      sol=`Los símbolos entre paréntesis indican el estado físico: (s) sólido, (l) líquido, (g) gas, (aq) disolución acuosa. Aquí, (${x[2]}) = ${ESTADO[x[2]]}.`;}
+    else{const x=pick(q.r.concat(q.p).filter(y=>y[0]>1)),f=fmtF(x[1]);
+      opts=[[`Que participan ${x[0]} moléculas (o unidades fórmula) de ${f}`,1],[`Que cada molécula de ${f} tiene ${x[0]} átomos`,0],[`Que se forman ${x[0]} gramos de ${f}`,0],[`Que ${f} tiene ${x[0]} elementos distintos`,0]];
+      st=`En la ecuación siguiente, ¿qué indica el coeficiente <b>${x[0]}</b> escrito delante de ${f}?${eqHTML(q)}`;
+      sol=`Los <b>coeficientes</b> indican el número de moléculas (o unidades fórmula, o moles) de cada sustancia; los <b>subíndices</b> indican cuántos átomos de cada elemento hay dentro de una molécula.`;}
+    items.push({n:2,blk:0,title:'Anatomía de una ecuación química',stmt:st,sol,hint:'',parts:[{type:'mc',opts:shuf(opts)}]});}
+  /* 3 · Átomos con coeficiente y subíndice */
+  {const f=pick(ATOMOS),k=int(2,7),pf=parseF(f);const multi=pf.filter(p=>p[1]>1);const [e,n]=pick(multi.length?multi:pf);const ans=k*n;
+    const par=f.includes('(')?' El subíndice que sigue a un paréntesis multiplica a todo lo que está dentro de él.':'';
+    items.push({n:3,blk:1,title:'Coeficientes y subíndices',stmt:`¿Cuántos átomos de ${ELNOM[e]} (${e}) hay en <span class="eqi"><b class="cf">${k}</b>&#8239;${fmtF(f)}</span>?`,
+      sol:`En una unidad de ${fmtF(f)} hay <b>${n}</b> átomos de ${e}.${par}<br>Con el coeficiente: ${k} × ${n} = <b>${ans}</b> átomos de ${e}.`,hint:'Primero cuenta los átomos en una sola fórmula (cuidado con los paréntesis) y luego multiplica por el coeficiente.',
+      parts:[{type:'int',ans,unit:'átomos',fmt:'Escribe un número entero. Ejemplo de formato: 18'}]});}
+  /* 4 · Conteo total de átomos en reactivos */
+  {const q=takeEq(q=>true);const rel=[...new Set(q.r.flatMap(x=>parseF(x[1]).map(p=>p[0])))];const e=pick(rel);
+    const terms=q.r.filter(x=>cnt(x[1],e)>0).map(x=>[x[0],x[1],cnt(x[1],e)]);const ans=terms.reduce((s,t)=>s+t[0]*t[2],0);
+    items.push({n:4,blk:1,title:'Conservación de átomos',stmt:`En la ecuación balanceada siguiente, ¿cuántos átomos de ${ELNOM[e]} (${e}) hay <b>en total del lado de los reactivos</b>?${eqHTML(q)}`,
+      sol:terms.map(t=>`${fmtF(t[1])}: ${t[0]} × ${t[2]} = ${t[0]*t[2]}`).join('<br>')+`<br>Total = <b>${ans}</b> átomos de ${e}. Como la ecuación está balanceada, del lado de los productos hay el mismo número.`,
+      hint:'Para cada reactivo que contiene el elemento, multiplica el coeficiente por el subíndice y suma.',parts:[{type:'int',ans,unit:'átomos',fmt:'Escribe un número entero. Ejemplo de formato: 14'}]});}
+  /* 5 y 6 · Tipos de reacción */
+  {const tps=shuf(['comb','desc','cmb']);[0,1].forEach(j=>{const t=tps[j];const q=takeEq(q=>q.t===t);
+    items.push({n:5+j,blk:2,title:'Tipos de reacción',stmt:`Clasifica la reacción siguiente:${eqHTML(q)}`,
+      sol:`Es una reacción de <b>${TIPO[t].toLowerCase()}</b>: ${TIPO_EXP[t]}.`,hint:'',parts:[{type:'mc',opts:['comb','desc','cmb'].map(k=>[TIPO[k],k===t?1:0])}]});});}
+  /* 7 · Peso fórmula (iónico) */
+  {const [f,nm]=take(IONICOS);useEls(f);const ans=MM(f);
+    items.push({n:7,blk:3,title:'Peso fórmula (PF)',stmt:`Calcula el peso fórmula del ${nm}, <span class="eqi">${fmtF(f)}</span>, en uma. Usa la tabla de masas atómicas de la actividad.`,
+      sol:pfLines(f)+`<br><b>PF = ${fx(ans,2)} uma</b>`,hint:'Suma las masas atómicas de todos los átomos de la fórmula (multiplica cada masa por su subíndice; ojo con los paréntesis).',
+      parts:[{type:'num',ans,tol:{rel:.005,abs:.05},unit:'uma',fmt:NUMFMT+'111.18'}]});}
+  /* 8 · Peso molecular */
+  {const [f,nm]=take(MOLECULARES);useEls(f);const ans=MM(f);
+    items.push({n:8,blk:3,title:'Peso molecular (PM)',stmt:`Calcula el peso molecular de la molécula de ${nm}, <span class="eqi">${fmtF(f)}</span>, en uma.`,
+      sol:pfLines(f)+`<br><b>PM = ${fx(ans,2)} uma</b>`,hint:'Suma las masas atómicas: número de átomos de cada elemento × su masa atómica.',
+      parts:[{type:'num',ans,tol:{rel:.005,abs:.05},unit:'uma',fmt:NUMFMT+'180.18'}]});}
+  /* 9 · Composición porcentual */
+  {const [f,nm]=take(R()<.5?IONICOS:MOLECULARES);useEls(f);const pf=parseF(f);const [e,n]=pick(pf);const M=MM(f),ans=100*n*MASAS[e]/M;
+    items.push({n:9,blk:4,title:'Composición porcentual',stmt:`¿Qué porcentaje de la masa de ${nm} (<span class="eqi">${fmtF(f)}</span>) corresponde al ${ELNOM[e]}?`,
+      sol:`PF de ${fmtF(f)} = ${fx(M,2)} uma.<br>% ${e} = (${n} × ${fx(MASAS[e],2)} / ${fx(M,2)}) × 100 = <b>${fx(ans,2)} %</b>`,hint:'% elemento = (número de átomos × masa atómica ÷ PF del compuesto) × 100.',
+      parts:[{type:'num',ans,tol:{rel:0,abs:.25},unit:'%',fmt:NUMFMT+'40.04 (sin el signo %)'}]});}
+  /* 10 · Masa de un elemento en una muestra */
+  {const [f,nm]=take(R()<.5?IONICOS:MOLECULARES);useEls(f);const pf=parseF(f);const [e,n]=pick(pf);const m=real(10,120,1),M=MM(f),fr=n*MASAS[e]/M,ans=m*fr;
+    items.push({n:10,blk:4,title:'Masa de un elemento en una muestra',stmt:`¿Cuántos gramos de ${ELNOM[e]} hay en una muestra de <b>${fx(m,1)} g</b> de ${nm} (<span class="eqi">${fmtF(f)}</span>)?`,
+      sol:`Fracción de ${e} = ${n} × ${fx(MASAS[e],2)} / ${fx(M,2)} = ${fx(fr,4)} (${fx(100*fr,2)} %).<br><i>m</i>(${e}) = ${fx(m,1)} g × ${fx(fr,4)} = <b>${fx(ans,2)} g</b>`,
+      hint:'Calcula primero el % en masa del elemento y aplícalo a la masa de la muestra.',parts:[{type:'num',ans,tol:{rel:.01,abs:.02},unit:'g',fmt:NUMFMT+'20.53'}]});}
+  /* 11 · gramos → moles */
+  {const [f,nm]=take(R()<.5?IONICOS:MOLECULARES);useEls(f);const m=real(5,250,2),M=MM(f),ans=m/M;
+    items.push({n:11,blk:5,title:'Gramos a moles',stmt:`¿Cuántos moles hay en <b>${fx(m,2)} g</b> de ${nm} (<span class="eqi">${fmtF(f)}</span>)?`,
+      sol:`Masa molar = ${fx(M,2)} g/mol.<br><i>n</i> = ${fx(m,2)} g × (1 mol / ${fx(M,2)} g) = <b>${sig(ans,4)} mol</b>`,hint:'La masa molar (g/mol) tiene el mismo valor numérico que el peso fórmula en uma. Divide la masa entre la masa molar.',
+      parts:[{type:'num',ans,tol:{rel:.01,abs:0},unit:'mol',fmt:NUMFMT+'0.4572'}]});}
+  /* 12 · gramos → moléculas */
+  {const [f,nm]=take(MOLECULARES);useEls(f);const m=real(1,90,2),M=MM(f),n=m/M,ans=n*ACT.NA;
+    items.push({n:12,blk:5,title:'Gramos a moléculas',stmt:`¿Cuántas moléculas hay en <b>${fx(m,2)} g</b> de ${nm} (<span class="eqi">${fmtF(f)}</span>)? Usa <i>N</i><sub>A</sub> = 6.022 × 10<sup>23</sup> mol<sup>−1</sup>.`,
+      sol:`Masa molar = ${fx(M,2)} g/mol ⇒ <i>n</i> = ${fx(m,2)} / ${fx(M,2)} = ${sig(n,4)} mol.<br>Moléculas = ${sig(n,4)} mol × 6.022 × 10<sup>23</sup> mol<sup>−1</sup> = <b>${sig(ans,4)}</b>`,
+      hint:'Gramos → moles (divide entre la masa molar) → moléculas (multiplica por el número de Avogadro).',
+      parts:[{type:'num',ans,tol:{rel:.015,abs:0},unit:'moléculas',fmt:'Usa notación científica con «e». Ejemplo de formato: 3.011e23 (significa 3.011 × 10²³)'}]});}
+  /* 13 · gramos → átomos de un elemento */
+  {const [f,nm]=take(R()<.5?IONICOS:MOLECULARES);useEls(f);const pf=parseF(f);const multi=pf.filter(p=>p[1]>1);const [e,k]=pick(multi.length?multi:pf);const m=real(2,60,2),M=MM(f),n=m/M,ans=n*k*ACT.NA;
+    items.push({n:13,blk:5,title:'Gramos a átomos de un elemento',stmt:`¿Cuántos átomos de ${ELNOM[e]} hay en <b>${fx(m,2)} g</b> de ${nm} (<span class="eqi">${fmtF(f)}</span>)? Usa <i>N</i><sub>A</sub> = 6.022 × 10<sup>23</sup> mol<sup>−1</sup>.`,
+      sol:`<i>n</i>(${fmtF(f)}) = ${fx(m,2)} / ${fx(M,2)} = ${sig(n,4)} mol.<br>Cada unidad de ${fmtF(f)} tiene ${k} átomo(s) de ${e} ⇒ <i>n</i>(${e}) = ${k} × ${sig(n,4)} = ${sig(k*n,4)} mol.<br>Átomos de ${e} = ${sig(k*n,4)} × 6.022 × 10<sup>23</sup> = <b>${sig(ans,4)}</b>`,
+      hint:'Gramos → moles del compuesto → moles del elemento (multiplica por el subíndice) → átomos (× N_A).',
+      parts:[{type:'num',ans,tol:{rel:.015,abs:0},unit:'átomos',fmt:'Usa notación científica con «e». Ejemplo de formato: 1.204e24 (significa 1.204 × 10²⁴)'}]});}
+  /* 14 · Fórmula empírica desde % (guiada) */
+  {const [f,nota]=pick(EMP_PCT);useEls(f);const pf=parseF(f),M=MM(f);
+    let pc=pf.map(([e,n])=>r2(100*n*MASAS[e]/M));const dif=r2(100-pc.reduce((a,b)=>a+b,0));pc[pc.length-1]=r2(pc[pc.length-1]+dif);
+    const els=pf.map(p=>p[0]),mol=pc.map((p,i)=>p/MASAS[els[i]]),sub=pf.map(p=>p[1]);
+    items.push({n:14,blk:6,title:'Fórmula empírica a partir de la composición porcentual',
+      stmt:`El análisis de un compuesto da la composición en masa siguiente: ${els.map((e,i)=>`<b>${fx(pc[i],2)} % ${e}</b>`).join(', ')}.<br>Supón una muestra de 100 g (así, cada % equivale a gramos).`,
+      sol:empSol(els,pc,'%')+`<br>${nota}`,hint:'',
+      parts:[{type:'molm',label:'a) Moles de cada elemento en 100 g de muestra',els,ans:mol,tol:{rel:.02,abs:0},fmt:NUMFMT+'5.105',hint:'moles = gramos ÷ masa atómica (no uses la masa de la molécula diatómica, p. ej., O = 16.00, no 32.00).'},
+             {type:'sub',label:'b) Fórmula empírica: escribe el subíndice de cada elemento',els,ans:sub,hint:'Divide todos los moles entre el menor. Si queda un decimal como .50, .33, .25 o .67, multiplica todo por 2, 3, 4 o 3.'}]});}
+  /* 15 · Fórmula empírica desde masas */
+  {const [f,nm]=pick(EMP_MAS);useEls(f);const pf=parseF(f),M=MM(f);const ms=real(1.5,25,2);
+    const els=pf.map(p=>p[0]);let g=pf.map(([e,n])=>Number((ms*n*MASAS[e]/M).toFixed(3)));g[g.length-1]=Number((ms-g.slice(0,-1).reduce((a,b)=>a+b,0)).toFixed(3));
+    items.push({n:15,blk:6,title:'Fórmula empírica a partir de masas',
+      stmt:`Una muestra de <b>${fx(ms,2)} g</b> de ${nm} contiene ${els.map((e,i)=>`<b>${fx(g[i],3)} g de ${ELNOM[e]}</b>`).join(' y ')}. Determina su fórmula empírica.`,
+      sol:empSol(els,g,'g'),hint:'Como ya tienes gramos, pasa directo a moles; divide entre el menor y, si hace falta, multiplica por un entero pequeño.',
+      parts:[{type:'sub',label:'Escribe el subíndice de cada elemento',els,ans:pf.map(p=>p[1])}]});}
+  const elList=[...els].sort((a,b)=>ZNUM[a]-ZNUM[b]);
+  let pid=0;items.forEach(it=>it.parts.forEach(p=>{p.pid=pid++;p.max=p.type==='mc'?1:2;}));
+  return{items,els:elList,ver:verOf(mat)};}
+
+function empSol(els,g,mode){const mol=g.map((x,i)=>x/MASAS[els[i]]),mn=Math.min(...mol),r=mol.map(m=>m/mn);
+  let k=1;for(const t of [1,2,3,4,5,6]){if(r.every(x=>Math.abs(x*t-Math.round(x*t))<=.08)){k=t;break;}}
+  const rows=els.map((e,i)=>`<tr><td>${e}</td><td>${fx(g[i],mode==='%'?2:3)} g</td><td>${fx(g[i],mode==='%'?2:3)} / ${fx(MASAS[e],2)} = ${fx(mol[i],4)}</td><td>${fx(r[i],3)}</td>${k>1?`<td>${fx(r[i]*k,2)}</td>`:''}<td><b>${Math.round(r[i]*k)}</b></td></tr>`).join('');
+  const f=els.map((e,i)=>e+(Math.round(r[i]*k)>1?Math.round(r[i]*k):'')).join('');
+  return `<table class="tsol"><tr><th>Elemento</th><th>Masa</th><th>Moles</th><th>÷ ${fx(mn,4)}</th>${k>1?`<th>× ${k}</th>`:''}<th>Subíndice</th></tr>${rows}</table>${k>1?`Como la razón no era entera, se multiplicó por ${k}.<br>`:''}Fórmula empírica: <b>${fmtF(f)}</b>`;}
+function empFormula(els,sub){return els.map((e,i)=>e+(sub[i]>1?sub[i]:'')).join('');}
+
+const BLOQUES=['Conservación de la masa y ecuaciones','Subíndices y coeficientes','Tipos de reacción','Peso fórmula y peso molecular','Composición porcentual','Mol y masa molar','Fórmulas empíricas'];
+const BLOQ_CORTO=['Ecuaciones','Subíndices','Tipos','PF y PM','% masa','Moles','F. empírica'];
+const PART_LABEL=['1','2','3','4','5','6','7','8','9','10','11','12','13','14a','14b','15'];
+function gradeFromR(r){let p=0;for(const ch of String(r)){if(ch==='2')p+=1;else if(ch==='1')p+=.5;}return{pts:p,cal:Math.round(100*p/ACT.parts)/10};}
+
+</script>
+<script>
+(function(){
+'use strict';
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const KEY='esteqT5:',LAST=KEY+'last';
+let ST=null,G=null,PMAP={},started=false,guard=false,guardT0=0,lastTick=0,graceUntil=0,cur=0;
+const TAB=Math.random().toString(36).slice(2);
+const de=document.documentElement;
+const FS_OK=!!(de.requestFullscreen||de.webkitRequestFullscreen);
+const isFS=()=>!!(document.fullscreenElement||document.webkitFullscreenElement);
+function reqFS(){const f=de.requestFullscreen||de.webkitRequestFullscreen;if(!f)return Promise.resolve();
+  try{const p=f.call(de,{navigationUI:'hide'});return p&&p.then?p.catch(()=>{}):new Promise(r=>setTimeout(r,300));}catch(_){return Promise.resolve();}}
+const pad=n=>String(n).padStart(2,'0');
+const stamp=t=>{const d=new Date(t);return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;};
+const hms=ms=>{const s=Math.floor(ms/1000);return pad(Math.floor(s/3600))+':'+pad(Math.floor(s/60)%60)+':'+pad(s%60);};
+const fmtMin=m=>m>=60?Math.floor(m/60)+' h '+(m%60)+' min':m+' min';
+const save=()=>{if(!ST)return;try{localStorage.setItem(KEY+normMat(ST.mat),JSON.stringify(ST));localStorage.setItem(LAST,normMat(ST.mat));}catch(_){}};
+const load=m=>{try{return JSON.parse(localStorage.getItem(KEY+normMat(m))||'null');}catch(_){return null;}};
+let toastT;function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('on'),2600);}
+function modal(html,btns){$('#mbox').innerHTML=html+'<div class="row" style="justify-content:flex-end;margin-top:14px">'+btns.map((b,i)=>`<button class="btn ${b.sec?'sec':''}" data-mb="${i}">${b.t}</button>`).join('')+'</div>';
+  $('#modal').classList.add('on');$$('#mbox [data-mb]').forEach(el=>el.onclick=()=>{$('#modal').classList.remove('on');const f=btns[+el.dataset.mb].f;f&&f();});}
+
+/* ================= Registro ================= */
+(function initReg(){const last=localStorage.getItem(LAST);const s=last&&load(last);
+  if(s){$('#rName').value=s.name;$('#rMat').value=s.mat;$('#rGrp').value=s.grp||'';
+    $('#resume').style.display='block';$('#resume').innerHTML=s.fin?'✅ Ya terminaste la actividad en este dispositivo. Entra para volver a ver y descargar tu comprobante.':'↻ Tienes una actividad en curso en este dispositivo. Al entrar continúas donde te quedaste (la recarga queda registrada).';}})();
+$('#rGo').onclick=()=>{const name=$('#rName').value.replace(/\s+/g,' ').trim(),mat=normMat($('#rMat').value),grp=$('#rGrp').value.trim();const err=$('#rErr');
+  if(name.split(' ').length<2||name.length<5){err.textContent='Escribe tu nombre completo (nombre y apellidos).';return;}
+  if(mat.length<4){err.textContent='Escribe tu matrícula (solo letras y números, mínimo 4 caracteres).';return;}
+  if(!$('#rOk').checked){err.textContent='Marca la casilla de las reglas para continuar.';return;}
+  const lk=lockOther(mat);if(lk){err.textContent='Esta matrícula tiene la actividad abierta en otra pestaña o ventana. Ciérrala primero.';return;}
+  const old=load(mat);
+  if(old){if(norm(old.name)!==norm(name)){err.innerHTML=`Esta matrícula ya está registrada en este dispositivo con el nombre <b>${esc(old.name)}</b>. Verifica tu matrícula.`;return;}
+    ST=old;if(!ST.fin){ST.rc++;}}
+  else ST={v:1,name,mat,grp,t0:Date.now(),t1:0,act:0,out:0,sal:0,pg:0,rc:0,fs:0,a:{},fin:false,cur:0,log:[]};
+  save();
+  if(ST.fin){start();return;}
+  reqFS().then(()=>{if(!ST.fs&&isFS())ST.fs=1;if(!ST.t1)ST.fsTried=1;save();start();});};
+
+function lockOther(mat){try{const l=JSON.parse(localStorage.getItem(KEY+'lock:'+mat)||'null');return l&&l.id!==TAB&&Date.now()-l.ts<6000;}catch(_){return false;}}
+function lockMe(){if(ST&&!ST.fin)try{localStorage.setItem(KEY+'lock:'+normMat(ST.mat),JSON.stringify({id:TAB,ts:Date.now()}));}catch(_){}}
+
+/* ================= Inicio ================= */
+function start(){G=genItems(ST.mat);PMAP={};G.items.forEach(it=>it.parts.forEach(p=>PMAP[p.pid]={it,p}));
+  $('#reg').style.display='none';$('#who').textContent=ST.name+' · '+ST.mat+' · versión '+G.ver;
+  watermark();renderTable();renderCalc();renderAll();started=true;graceUntil=Date.now()+1800;lastTick=Date.now();
+  go(ST.fin?7:(ST.cur||0));setTop();setInterval(tick,1000);window.addEventListener('resize',setTop);}
+function setTop(){document.documentElement.style.setProperty('--toph',$('#top').offsetHeight+'px');}
+function tick(){const now=Date.now();
+  if(started&&!ST.fin&&!guard&&!document.hidden){ST.act+=Math.min(now-lastTick,5000);}
+  lastTick=now;$('#clock').textContent='⏱ '+hms(ST.act);
+  if(started&&!ST.fin&&FS_OK&&ST.fs&&!isFS()&&!guard&&now>graceUntil)exitEv('Saliste del modo de pantalla completa');
+  lockMe();if(now%5000<1000)save();}
+function watermark(){const c=document.createElement('canvas');c.width=420;c.height=260;const x=c.getContext('2d');
+  x.translate(210,130);x.rotate(-0.42);x.font='600 17px system-ui,sans-serif';x.textAlign='center';x.fillStyle='rgba(123,30,58,0.075)';
+  x.fillText(ST.name,0,-6);x.fillText(ST.mat+' · '+G.ver,0,18);$('#wm').style.backgroundImage=`url(${c.toDataURL()})`;}
+
+/* ================= Antitrampa ================= */
+function exitEv(why){if(!started||!ST||ST.fin||guard||Date.now()<graceUntil)return;
+  guard=true;guardT0=Date.now();ST.sal++;ST.log.push([Math.round((Date.now()-ST.t0)/1000),why]);save();
+  $('#gWhy').textContent=why+'.';$('#gCnt').textContent=ST.sal;$('#guard').classList.add('on');document.body.classList.add('blur');updExits();}
+$('#gBack').onclick=()=>{const done=()=>{if(!guard)return;ST.out+=Date.now()-guardT0;guard=false;graceUntil=Date.now()+1200;save();
+    $('#guard').classList.remove('on');document.body.classList.remove('blur');};
+  if(FS_OK&&ST.fs){reqFS().then(()=>{if(isFS())done();else toast('Permite la pantalla completa para continuar.');});}else done();};
+document.addEventListener('visibilitychange',()=>{if(document.hidden)exitEv('Cambiaste de pestaña, minimizaste la ventana o bloqueaste la pantalla');});
+window.addEventListener('blur',()=>setTimeout(()=>{if(!document.hasFocus()&&!document.hidden)exitEv('La ventana de la actividad perdió el foco (abriste otra ventana o aplicación)');},200));
+['fullscreenchange','webkitfullscreenchange'].forEach(ev=>document.addEventListener(ev,()=>{if(ST&&ST.fs&&!isFS())exitEv('Saliste del modo de pantalla completa');}));
+function updExits(){const e=$('#exits');e.textContent='Salidas: '+ST.sal+(ST.pg?' · C/P: '+ST.pg:'');e.classList.toggle('alert',ST.sal>0);}
+function strike(msg){if(started&&ST&&!ST.fin){ST.pg++;save();updExits();toast(msg+' El intento quedó registrado.');}else toast(msg);}
+['copy','cut','paste','drop'].forEach(ev=>document.addEventListener(ev,e=>{if(!started&&e.target.closest&&e.target.closest('#reg')&&ev==='paste')return;e.preventDefault();strike(ev==='copy'||ev==='cut'?'Copiar está deshabilitado.':'Pegar está deshabilitado.');},true));
+['contextmenu','dragstart'].forEach(ev=>document.addEventListener(ev,e=>e.preventDefault(),true));
+document.addEventListener('selectstart',e=>{if(!(e.target.closest&&e.target.closest('input')))e.preventDefault();},true);
+document.addEventListener('beforeinput',e=>{if(!started||(e.target.closest&&e.target.closest('#reg')))return;const t=e.inputType||'';
+  if(/insertFromPaste|insertFromDrop|insertFromYank|insertFromPasteAsQuotation/.test(t)||((t==='insertText'||t==='insertReplacementText')&&e.data&&e.data.length>3)){e.preventDefault();strike('No se permite pegar ni insertar bloques de texto.');}},true);
+document.addEventListener('keydown',e=>{const k=(e.key||'').toLowerCase();
+  if((e.ctrlKey||e.metaKey)&&['c','v','x','a','p','s','u'].includes(k)){e.preventDefault();if(k==='c'||k==='v'||k==='x')strike(k==='c'?'Copiar está deshabilitado.':'Pegar está deshabilitado.');return;}
+  if(k==='f12'||((e.ctrlKey||e.metaKey)&&e.shiftKey&&['i','j','c'].includes(k))||(e.metaKey&&e.altKey&&['i','j','c'].includes(k))){e.preventDefault();return;}
+  calcKey(e);},true);
+document.addEventListener('keyup',e=>{if(e.key==='PrintScreen'){try{navigator.clipboard.writeText('');}catch(_){}toast('Las capturas de pantalla no sustituyen tu comprobante.');}});
+window.addEventListener('beforeprint',()=>strike('La impresión está deshabilitada.'));
+
+/* ================= Render ================= */
+const RECUERDA=[
+ '<b class="h">Recuerda</b>Ley de conservación de la masa (Lavoisier): en una reacción la masa no se crea ni se destruye; masa de reactivos = masa de productos. En una ecuación los <b>reactivos</b> van a la izquierda, los <b>productos</b> a la derecha, el <b>estado</b> entre paréntesis — (s), (l), (g), (aq) — y los <b>coeficientes</b> balancean la ecuación.',
+ '<b class="h">Recuerda</b>Los <b>subíndices</b> indican cuántos átomos de cada elemento hay en una molécula; los <b>coeficientes</b>, cuántas moléculas. Átomos totales = coeficiente × subíndice. Un subíndice después de un paréntesis multiplica todo lo que está dentro: en 2 Ca(NO<sub>3</sub>)<sub>2</sub> hay 2 × 3 × 2 = 12 átomos de O.',
+ '<b class="h">Recuerda</b><b>Combinación:</b> A + B → AB. <b>Descomposición:</b> AB → A + B. <b>Combustión:</b> reacción rápida con O<sub>2</sub> que produce llama; con hidrocarburos forma CO<sub>2</sub> y H<sub>2</sub>O.',
+ '<b class="h">Recuerda</b>PF (o PM) = suma de las masas atómicas de todos los átomos de la fórmula. Ejemplo: CaCl<sub>2</sub> = 40.08 + 2(35.45) = 110.98 uma. Usa la tabla de masas de la actividad (botón 📋).',
+ '<b class="h">Recuerda</b>% elemento = (número de átomos × masa atómica ÷ PF) × 100. Ejemplo: C en C<sub>2</sub>H<sub>6</sub> (PM = 30.08 uma): 2(12.01)/30.08 × 100 = 79.85 %.',
+ '<b class="h">Recuerda</b>1 mol = 6.022 × 10<sup>23</sup> partículas (número de Avogadro). La masa molar en g/mol tiene el mismo valor que el PF en uma. Ruta: gramos ÷ masa molar → moles × <i>N</i><sub>A</sub> → partículas (y × subíndice para átomos de un elemento).',
+ '<b class="h">Recuerda</b>1) % → gramos (supón 100 g). 2) Gramos → moles (÷ masa atómica). 3) Divide entre el menor número de moles. 4) Si queda .50, .33, .25 o .67, multiplica todo por 2, 3, 4 o 3. Ejemplo de la clase: PABA → C<sub>7</sub>H<sub>7</sub>NO<sub>2</sub>.'];
+function renderAll(){
+  $('#nav').innerHTML=BLOQ_CORTO.map((b,i)=>`<button data-go="${i}">${i+1}. ${b} <span class="dn" id="dn${i}"></span></button>`).join('')+`<button data-go="7">🎓 Resultados</button>`;
+  let h='';BLOQUES.forEach((b,bi)=>{h+=`<section class="blk" id="b${bi}"><h2>${bi+1}. ${b}</h2><div class="rec">${RECUERDA[bi]}</div>`;
+    G.items.filter(it=>it.blk===bi).forEach(it=>h+=itemHTML(it));
+    h+=`<div class="navb">${bi>0?`<button class="btn sec" data-go="${bi-1}">← Anterior</button>`:'<span></span>'}<button class="btn" data-go="${bi+1}">${bi<6?'Siguiente →':'Ver resultados →'}</button></div></section>`;});
+  h+=`<section class="blk" id="b7"><h2>🎓 Resultados y comprobante</h2><div class="card" id="resc"></div><div class="card refs"><b>Referencias</b>
+    <p>Brown, T. L., LeMay, H. E., Bursten, B. E., Murphy, C. J., Woodward, P. M., &amp; Stoltzfus, M. W. (2018). <i>Chemistry: The central science</i> (14th ed.). Pearson.</p>
+    <p>Goldberg, D. E. (2005). <i>Schaum’s outline of theory and problems of beginning chemistry</i> (3rd ed.). McGraw-Hill.</p>
+    <p>Prohaska, T., Irrgeher, J., Benefield, J., Böhlke, J. K., Chesson, L. A., Coplen, T. B., Ding, T., Dunn, P. J. H., Gröning, M., Holden, N. E., Meijer, H. A. J., Moossen, H., Possolo, A., Takahashi, Y., Vogl, J., Walczyk, T., Wang, J., Wieser, M. E., Yoneda, S., … Meija, J. (2022). Standard atomic weights of the elements 2021 (IUPAC Technical Report). <i>Pure and Applied Chemistry, 94</i>(5), 573–600. https://doi.org/10.1515/pac-2019-0603</p></div></section>`;
+  $('#main').innerHTML=h;
+  G.items.forEach(it=>it.parts.forEach(p=>paint(p.pid)));G.items.forEach(paintSol);updNav();updExits();renderRes();}
+function itemHTML(it){const pts=it.parts.length;
+  return `<div class="card" id="it${it.n}"><div class="hd"><span class="no">${it.n}</span><span class="tt">${it.title}</span><span class="pts" id="ip${it.n}">${pts} pt${pts>1?'s':''}</span></div><div>${it.stmt}</div>
+  ${it.parts.map(p=>partHTML(it,p)).join('')}<div class="sol" id="sol${it.n}"><b class="h">Solución</b><br>${it.sol}</div></div>`;}
+function partHTML(it,p){const id=p.pid,lb=p.label?`<div class="lb">${p.label}</div>`:'';let b='';
+  if(p.type==='num'||p.type==='int')b=`<div class="inrow"><input class="ans" id="in${id}" inputmode="${p.type==='int'?'numeric':'decimal'}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"><span class="unit">${p.unit||''}</span><button class="btn sm" data-chk="${id}">Comprobar</button></div><div class="fmt">${p.fmt}</div>`;
+  else if(p.type==='mc')b=`<div class="opts">${p.opts.map((o,i)=>`<label id="op${id}_${i}"><input type="radio" name="mc${id}" value="${i}"><span>${o[0]}</span></label>`).join('')}</div><button class="btn sm" data-chk="${id}">Comprobar</button>`;
+  else if(p.type==='molm')b=`<div class="molg">${p.els.map((e,i)=>`<label>mol ${e}: <input class="mi" id="in${id}_${i}" inputmode="decimal" autocomplete="off" spellcheck="false"></label>`).join('')}</div><div class="fmt">${p.fmt}</div><div style="margin-top:6px"><button class="btn sm" data-chk="${id}">Comprobar</button></div>`;
+  else if(p.type==='sub')b=`<div class="inrow"><div class="subb">${p.els.map((e,i)=>`<span>${e}<input class="si" id="in${id}_${i}" inputmode="numeric" maxlength="2" autocomplete="off" data-prev="${id}"></span>`).join('')}</div><span class="prev" id="pv${id}"></span><button class="btn sm" data-chk="${id}">Comprobar</button></div><div class="fmt">Escribe 1 cuando el elemento no lleve subíndice.</div>`;
+  return `<div class="pt" id="pt${id}">${lb}${b}<div class="fb" id="fb${id}"></div></div>`;}
+function fb(pid,cls,html){const el=$('#fb'+pid);el.className='fb '+cls;el.innerHTML=html;}
+const st=pid=>ST.a[pid]||(ST.a[pid]={t:0,p:0,d:0,v:null});
+const within=(v,a,t)=>Math.abs(v-a)<=Math.max(t.abs||0,(t.rel||0)*Math.abs(a));
+function ansTxt(p){if(p.type==='mc')return p.opts.find(o=>o[1])[0];
+  if(p.type==='num')return sig(p.ans,4)+' '+(p.unit||'');if(p.type==='int')return p.ans+' '+(p.unit||'');
+  if(p.type==='molm')return p.els.map((e,i)=>`${e}: ${sig(p.ans[i],4)} mol`).join(' · ');return fmtF(empFormula(p.els,p.ans));}
+function check(pid){if(ST.fin)return;const {it,p}=PMAP[pid];const s=st(pid);if(s.d)return;let ok=false,vals,extra='';
+  if(p.type==='mc'){const r=document.querySelector(`input[name=mc${pid}]:checked`);if(!r)return fb(pid,'warn','Selecciona una opción.');vals=+r.value;ok=!!p.opts[vals][1];}
+  else if(p.type==='num'||p.type==='int'){const raw=$('#in'+pid).value;const v=parseNum(raw);
+    if(!isFinite(v))return fb(pid,'warn','Formato no válido; este intento <b>no cuenta</b>. '+p.fmt+'.');
+    if(p.type==='int'&&!Number.isInteger(v))return fb(pid,'warn','Escribe un número entero; este intento no cuenta.');
+    vals=raw.trim();ok=p.type==='int'?v===p.ans:within(v,p.ans,p.tol);}
+  else if(p.type==='molm'){const vs=p.els.map((e,i)=>parseNum($(`#in${pid}_${i}`).value));
+    if(vs.some(v=>!isFinite(v)))return fb(pid,'warn','Completa todos los moles con el formato indicado; este intento no cuenta.');
+    vals=vs;const oks=vs.map((v,i)=>within(v,p.ans[i],p.tol));ok=oks.every(Boolean);if(!ok)extra=' Revisa: '+p.els.filter((e,i)=>!oks[i]).join(', ')+'.';}
+  else if(p.type==='sub'){const vs=p.els.map((e,i)=>parseInt($(`#in${pid}_${i}`).value,10));
+    if(vs.some(v=>!(v>=1&&v<=40)))return fb(pid,'warn','Escribe un entero (1 o mayor) en cada casilla; este intento no cuenta.');
+    vals=vs;ok=vs.every((v,i)=>v===p.ans[i]);
+    if(!ok){const k=vs[0]/p.ans[0];if(Number.isInteger(k)&&k>1&&vs.every((v,i)=>v===k*p.ans[i]))extra=' La proporción es correcta, pero no es la mínima: simplifica.';}}
+  s.t++;s.v=vals;
+  if(ok){s.p=s.t===1?1:.5;s.d=1;}else if(s.t>=p.max){s.d=1;s.p=0;}
+  save();paint(pid,extra);paintSol(it);updNav();renderRes();}
+function paint(pid,extra){const {it,p}=PMAP[pid];const s=ST.a[pid];if(!s||!s.t){if(p.type==='sub')prevSub(pid);return;}
+  // restaurar valores
+  if(p.type==='num'||p.type==='int')$('#in'+pid).value=s.v;
+  else if(p.type==='mc'){const r=document.querySelector(`input[name=mc${pid}][value="${s.v}"]`);if(r)r.checked=true;}
+  else if(Array.isArray(s.v))s.v.forEach((v,i)=>{const el=$(`#in${pid}_${i}`);if(el)el.value=p.type==='molm'?sigTxt(v,4).replace(/<[^>]*>/g,''):v;});
+  if(p.type==='sub')prevSub(pid);
+  if(s.d){$$(`#pt${pid} input,#pt${pid} button`).forEach(el=>el.disabled=true);
+    if(p.type==='mc')p.opts.forEach((o,i)=>{const l=$(`#op${pid}_${i}`);if(o[1])l.classList.add('okc');else if(i===s.v)l.classList.add('badc');});
+    if(s.p===1)fb(pid,'ok','✓ ¡Correcto! <b>+1</b>');
+    else if(s.p===.5)fb(pid,'ok','✓ Correcto en el segundo intento. <b>+0.5</b>');
+    else fb(pid,'bad',`✗ No es correcto.${extra||''} Respuesta: <b>${ansTxt(p)}</b>. Revisa la solución.`);}
+  else{const h=p.hint||it.hint;fb(pid,'bad',`✗ No es correcto.${extra||''} Te queda <b>1 intento</b>.${h?' <b>Pista:</b> '+h:''}`);}}
+function paintSol(it){const done=it.parts.every(p=>ST.a[p.pid]&&ST.a[p.pid].d);$('#sol'+it.n).classList.toggle('on',done);
+  const got=it.parts.reduce((s,p)=>s+(ST.a[p.pid]?ST.a[p.pid].p:0),0);if(done)$('#ip'+it.n).textContent=got+' / '+it.parts.length+' pt';}
+function prevSub(pid){const {p}=PMAP[pid];const vs=p.els.map((e,i)=>parseInt($(`#in${pid}_${i}`).value,10));
+  $('#pv'+pid).innerHTML=vs.every(v=>v>=1)?'→ '+fmtF(empFormula(p.els,vs)):'';}
+function rStr(){return G.items.flatMap(it=>it.parts).map(p=>{const s=ST.a[p.pid];if(!s||!s.d)return'-';return s.p===1?'2':s.p===.5?'1':'0';}).join('');}
+function blockDone(bi){return G.items.filter(it=>it.blk===bi).every(it=>it.parts.every(p=>ST.a[p.pid]&&ST.a[p.pid].d));}
+function updNav(){let dn=0;G.items.forEach(it=>it.parts.forEach(p=>{if(ST.a[p.pid]&&ST.a[p.pid].d)dn++;}));
+  $('#prog i').style.width=(100*dn/ACT.parts)+'%';for(let i=0;i<7;i++)$('#dn'+i).textContent=blockDone(i)?'✓':'';}
+function go(i){i=Math.max(0,Math.min(7,+i));cur=i;if(ST&&!ST.fin){ST.cur=i;save();}
+  $$('section.blk').forEach((s,k)=>s.classList.toggle('on',k===i));$$('#nav button').forEach(b=>b.classList.toggle('on',+b.dataset.go===i));
+  const nb=$(`#nav button[data-go="${i}"]`);if(nb)nb.scrollIntoView({block:'nearest',inline:'center'});window.scrollTo(0,0);if(i===7)renderRes();}
+document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g){go(g.dataset.go);return;}
+  const c=e.target.closest('[data-chk]');if(c){check(+c.dataset.chk);return;}});
+document.addEventListener('input',e=>{if(e.target.dataset&&e.target.dataset.prev)prevSub(+e.target.dataset.prev);});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.closest&&e.target.closest('.pt')){const b=e.target.closest('.pt').querySelector('[data-chk]');if(b&&!b.disabled)b.click();}});
+
+/* ================= Resultados y comprobante ================= */
+function renderRes(){const el=$('#resc');if(!el||!G)return;const r=rStr(),gr=gradeFromR(r),pend=r.split('').filter(c=>c==='-').length;let k=0;
+  const rows=BLOQUES.map((b,bi)=>{const ps=G.items.filter(it=>it.blk===bi).flatMap(it=>it.parts);let pts=0;
+    const mk=ps.map(p=>{const c=r[p.pid];if(c==='2')pts+=1;else if(c==='1')pts+=.5;return `<span class="mk m${c==='-'?'x':c}" title="Reactivo ${PART_LABEL[p.pid]}">${PART_LABEL[p.pid]}</span>`;}).join('');
+    return `<tr><td>${bi+1}. ${b}<br>${mk}</td><td>${pts} / ${ps.length}</td></tr>`;}).join('');
+  let h=`<table class="res"><tr><th>Bloque</th><th>Puntos</th></tr>${rows}<tr><th>Total</th><th>${gr.pts} / ${ACT.parts}</th></tr></table>
+    <div class="row" style="justify-content:space-between;margin-top:10px"><span>Calificación ${ST.fin?'final':'parcial'}</span><span class="big">${gr.cal.toFixed(1)}</span></div>
+    <p class="small"><span class="mk m2">✓</span> primer intento (1) · <span class="mk m1">½</span> segundo intento (0.5) · <span class="mk m0">✗</span> sin acierto (0) · <span class="mk mx">–</span> pendiente</p>
+    <p class="small">Tiempo activo: <b>${hms(ST.act)}</b> · Salidas: <b>${ST.sal}</b> · Intentos de copiar/pegar: <b>${ST.pg}</b> · Recargas: <b>${ST.rc}</b></p>`;
+  if(!ST.fin)h+=pend?`<p>Te faltan <b>${pend}</b> reactivo(s) por responder para poder finalizar.</p><button class="btn" disabled>Finalizar y generar comprobante</button>`
+    :`<p>Respondiste todos los reactivos. Al finalizar ya no podrás modificar nada.</p><button class="btn" id="bFin">Finalizar y generar comprobante</button>`;
+  else h+=`<div id="cout"></div>`;
+  el.innerHTML=h;
+  if($('#bFin'))$('#bFin').onclick=()=>modal('<b>¿Finalizar la actividad?</b><p>Se detiene el registro de tiempo y se genera tu comprobante. Ya no podrás cambiar respuestas.</p>',[{t:'Cancelar',sec:1},{t:'Sí, finalizar',f:finish}]);
+  if(ST.fin)buildComp();}
+function finish(){if(ST.fin)return;ST.fin=true;ST.t1=Date.now();save();try{localStorage.removeItem(KEY+'lock:'+normMat(ST.mat));}catch(_){}
+  renderRes();toast('¡Actividad terminada! Descarga tu comprobante.');if(isFS()){try{(document.exitFullscreen||document.webkitExitFullscreen).call(document);}catch(_){}}}
+function compData(){const sm={n:ST.name,m:ST.mat,g:ST.grp||'—',t0:stamp(ST.t0),t1:stamp(ST.t1),act:Math.max(1,Math.round(ST.act/60000)),
+    tot:Math.max(1,Math.round((ST.t1-ST.t0)/60000)),out:Math.round(ST.out/60000),sal:ST.sal,pg:ST.pg,rc:ST.rc,fs:ST.fs?1:0,r:rStr(),ver:G.ver};
+  sm.c=code8(sumStr(sm));return sm;}
+function buildComp(){const sm=compData();const url=new URL('verificar.html',location.href).href.split('#')[0]+'#d='+b64e(JSON.stringify(sm));
+  const cv=drawComp(sm,url),du=cv.toDataURL('image/png');const base='comprobante_estequiometria_'+normMat(ST.mat);
+  const pdf=URL.createObjectURL(pdfFromJpeg(cv.toDataURL('image/jpeg',.92),cv.width,cv.height));
+  $('#cout').innerHTML=`<img class="comp-img" alt="Comprobante" src="${du}"><div class="row" style="justify-content:center"><a class="btn" download="${base}.png" href="${du}">⬇ Descargar PNG</a><a class="btn sec" download="${base}.pdf" href="${pdf}">⬇ Descargar PDF</a><button class="btn sec" id="cshare" hidden>📤 Compartir</button></div>
+    <p class="small" style="text-align:center">Entrega este comprobante en Blackboard. En el celular también puedes mantener presionada la imagen para guardarla.</p>`;
+  cv.toBlob(bl=>{if(!bl)return;const f=new File([bl],base+'.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){const b=$('#cshare');b.hidden=false;b.onclick=()=>navigator.share({files:[f],title:'Comprobante · Estequiometría'}).catch(()=>{});}},'image/png');}
+function drawComp(sm,url){const W=1080,H=1880,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+  const F='system-ui,-apple-system,"Segoe UI",Roboto,sans-serif',ACC='#7b1e3a',INK='#1f2430',MUT='#5f6675',LINE='#e4e1e6';
+  x.fillStyle='#fff';x.fillRect(0,0,W,H);
+  const gr=x.createLinearGradient(0,0,W,0);gr.addColorStop(0,'#4a0f22');gr.addColorStop(1,ACC);x.fillStyle=gr;x.fillRect(0,0,W,200);x.fillStyle='#f59f00';x.fillRect(0,200,W,7);
+  x.fillStyle='#fff';x.font=`600 24px ${F}`;x.fillText('COMPOSICIÓN DE LA MATERIA · BIOINGENIERÍA · CEUX ENSENADA',60,70);
+  x.font=`800 54px ${F}`;x.fillText('Comprobante de actividad',60,138);x.font=`500 26px ${F}`;x.fillStyle='#f3d6e0';x.fillText('Estequiometría: fórmulas químicas, el mol y fórmulas empíricas',60,180);
+  const fit=(t,mw,sz,wt)=>{let s=sz;x.font=`${wt} ${s}px ${F}`;while(x.measureText(t).width>mw&&s>20){s-=2;x.font=`${wt} ${s}px ${F}`;}};
+  const lab=(t,X,Y)=>{x.fillStyle=MUT;x.font=`600 21px ${F}`;x.fillText(t,X,Y);};
+  const val=(t,X,Y,mw,sz)=>{x.fillStyle=INK;fit(String(t),mw,sz||32,700);x.fillText(String(t),X,Y);};
+  let y=272;lab('ESTUDIANTE',60,y);val(sm.n,60,y+50,W-120,46);
+  y+=110;[['MATRÍCULA',sm.m],['GRUPO',sm.g],['VERSIÓN DE REACTIVOS',sm.ver]].forEach((it,i)=>{lab(it[0],60+i*330,y);val(it[1],60+i*330,y+42,300);});
+  y+=92;[['INICIO',sm.t0],['FIN',sm.t1]].forEach((it,i)=>{lab(it[0],60+i*500,y);val(it[1],60+i*500,y+42,460);});
+  y+=78;x.fillStyle='#f7f3f5';rr(x,40,y,W-80,150,18);x.fill();
+  [['TIEMPO ACTIVO',fmtMin(sm.act)],['TIEMPO TOTAL',fmtMin(sm.tot)],['TIEMPO FUERA',fmtMin(sm.out)]].forEach((it,i)=>{lab(it[0],70+i*330,y+44);val(it[1],70+i*330,y+86,290,30);});
+  x.fillStyle=MUT;x.font=`500 21px ${F}`;x.fillText(`Pantalla completa: ${sm.fs?'sí':'no disponible'}`,70,y+128);
+  y+=170;const alertC=sm.sal+sm.pg>0;x.fillStyle=alertC?'#fff4de':'#e7f6ec';rr(x,40,y,W-80,96,18);x.fill();
+  [['SALIDAS',sm.sal],['COPIAR / PEGAR',sm.pg],['RECARGAS',sm.rc]].forEach((it,i)=>{lab(it[0],70+i*330,y+38);x.fillStyle=it[1]>0&&i<2?'#b45309':INK;x.font=`800 34px ${F}`;x.fillText(String(it[1]),70+i*330,y+78);});
+  y+=136;x.fillStyle=MUT;x.font=`700 21px ${F}`;x.fillText('BLOQUE',60,y);x.textAlign='right';x.fillText('PUNTOS',W-60,y);x.textAlign='left';
+  const r=sm.r;let pid=0,tot=0;
+  BLOQUES.forEach((b,bi)=>{const n=[2,2,2,2,2,3,3][bi];y+=58;let pts=0;
+    x.fillStyle=INK;x.font=`600 25px ${F}`;x.fillText(`${bi+1}. ${b}`,60,y);
+    let bx=640;for(let k=0;k<n;k++,pid++){const ch=r[pid];if(ch==='2')pts+=1;else if(ch==='1')pts+=.5;
+      x.fillStyle=ch==='2'?'#e7f6ec':ch==='1'?'#fef3c7':'#fdecec';rr(x,bx,y-28,62,36,8);x.fill();
+      x.fillStyle=ch==='2'?'#15803d':ch==='1'?'#92400e':'#b91c1c';x.font=`800 19px ${F}`;x.textAlign='center';x.fillText(PART_LABEL[pid]+(ch==='2'?'✓':ch==='1'?'½':'✗'),bx+31,y-3);x.textAlign='left';bx+=68;}
+    tot+=pts;x.fillStyle=INK;x.font=`700 25px ${F}`;x.textAlign='right';x.fillText(`${pts}/${n}`,W-60,y);x.textAlign='left';
+    x.strokeStyle=LINE;x.lineWidth=2;x.beginPath();x.moveTo(40,y+18);x.lineTo(W-40,y+18);x.stroke();});
+  const g=gradeFromR(r);y+=46;x.fillStyle='#f6e9ee';rr(x,40,y,W-80,100,20);x.fill();
+  x.fillStyle=INK;x.font=`700 30px ${F}`;x.fillText(`Calificación (${g.pts} de ${ACT.parts} puntos)`,70,y+62);x.textAlign='right';x.fillStyle=ACC;x.font=`800 60px ${F}`;x.fillText(g.cal.toFixed(1),W-70,y+72);x.textAlign='left';
+  y+=128;const bH=330;x.strokeStyle=LINE;x.lineWidth=3;rr(x,40,y,W-80,bH,22);x.stroke();
+  lab('CÓDIGO DE VERIFICACIÓN',75,y+64);x.fillStyle=INK;x.font=`800 76px ui-monospace,"SF Mono",Menlo,Consolas,monospace`;x.fillText(sm.c,75,y+156);
+  x.fillStyle=MUT;x.font=`400 22px ${F}`;wrapT(x,'Tu profesor escanea el QR para comprobar que los datos no fueron modificados. Si se edita la imagen, el código deja de coincidir.',75,y+212,560,31);
+  drawQR(x,url,W-70-280,y+25,280);
+  x.fillStyle=MUT;x.font=`400 19px ${F}`;wrapT(x,'✓ = primer intento (1 pt) · ½ = segundo intento (0.5 pt) · ✗ = sin acierto. Reactivos generados a partir de la matrícula. Elaborado por T. Huerta.',60,y+bH+44,W-120,28);
+  return c;}
+function rr(x,X,Y,w,h,r){x.beginPath();x.moveTo(X+r,Y);x.arcTo(X+w,Y,X+w,Y+h,r);x.arcTo(X+w,Y+h,X,Y+h,r);x.arcTo(X,Y+h,X,Y,r);x.arcTo(X,Y,X+w,Y,r);x.closePath();}
+function wrapT(x,t,X,Y,mw,lh){let line='';t.split(' ').forEach(w=>{const s=line?line+' '+w:w;if(x.measureText(s).width>mw&&line){x.fillText(line,X,Y);Y+=lh;line=w;}else line=s;});if(line)x.fillText(line,X,Y);}
+function drawQR(x,text,X,Y,size){if(typeof window.qrcode!=='function')return;
+  try{const q=window.qrcode(0,'L');q.addData(text);q.make();const n=q.getModuleCount(),cell=Math.floor(size/(n+2)),off=Math.floor((size-cell*n)/2);
+    x.fillStyle='#fff';x.fillRect(X,Y,size,size);x.fillStyle='#000';for(let r=0;r<n;r++)for(let cc=0;cc<n;cc++)if(q.isDark(r,cc))x.fillRect(X+off+cc*cell,Y+off+r*cell,cell,cell);}catch(_){}}
+function pdfFromJpeg(du,w,h){const bin=atob(du.split(',')[1]);const img=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)img[i]=bin.charCodeAt(i);
+  const pw=612,ph=Math.round(612*h/w),enc=s=>new TextEncoder().encode(s),parts=[],offs=[];let off=0;const push=b=>{parts.push(b);off+=b.length;};
+  push(enc('%PDF-1.4\n'));const obj=(n,s)=>{offs[n]=off;push(enc(n+' 0 obj\n'+s+'\nendobj\n'));};
+  obj(1,'<< /Type /Catalog /Pages 2 0 R >>');obj(2,'<< /Type /Pages /Kids [3 0 R] /Count 1 >>');
+  obj(3,`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pw} ${ph}] /Resources << /XObject << /Im0 5 0 R >> >> /Contents 4 0 R >>`);
+  const cs=`q ${pw} 0 0 ${ph} 0 0 cm /Im0 Do Q`;obj(4,`<< /Length ${cs.length} >>\nstream\n${cs}\nendstream`);
+  offs[5]=off;push(enc(`5 0 obj\n<< /Type /XObject /Subtype /Image /Width ${w} /Height ${h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${img.length} >>\nstream\n`));push(img);push(enc('\nendstream\nendobj\n'));
+  const xr=off;let t='xref\n0 6\n0000000000 65535 f \n';for(let i=1;i<=5;i++)t+=String(offs[i]).padStart(10,'0')+' 00000 n \n';
+  t+=`trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${xr}\n%%EOF\n`;push(enc(t));return new Blob(parts,{type:'application/pdf'});}
+
+/* ================= Tabla de masas ================= */
+function renderTable(){$('#tbody').innerHTML=`<p class="small" style="margin:2px 0 6px">Solo los elementos de tus ejercicios.</p><table>${G.els.map(e=>`<tr><td class="small">${ZNUM[e]}</td><td class="sy">${e}</td><td>${ELNOM[e]}</td><td class="ma">${fx(MASAS[e],2)}</td></tr>`).join('')}</table>
+  <p class="small" style="margin-top:8px"><i>N</i><sub>A</sub> = 6.022 × 10<sup>23</sup> mol<sup>−1</sup><br>Valores redondeados de IUPAC (Prohaska et al., 2022).</p>`;}
+
+/* ================= Calculadora ================= */
+const CALC={s:'',ans:0,res:'0',just:false};
+const KEYS=[['AC','fn'],['DEL','fn'],['(','op'],[')','op'],['÷','op'],['7'],['8'],['9'],['x²','fn'],['×','op'],['4'],['5'],['6'],['√','fn'],['−','op'],['1'],['2'],['3'],['EXP','fn'],['+','op'],['0'],['.'],['Ans','fn'],['xʸ','fn'],['=','eqk']];
+function renderCalc(){$('#ckeys').innerHTML=KEYS.map(k=>`<button class="${k[1]||''}" data-ck="${k[0]}">${k[0]}</button>`).join('');calcShow();}
+function calcShow(){$('#cexp').textContent=CALC.s;$('#cres').textContent=CALC.res;}
+function cIn(k){if(k==='AC'){CALC.s='';CALC.res='0';}else if(k==='DEL'){CALC.s=CALC.s.endsWith('Ans')?CALC.s.slice(0,-3):CALC.s.slice(0,-1);}
+  else if(k==='='){calcRun();return;}
+  else{let t={'x²':'^2','√':'√(','EXP':'E','xʸ':'^'}[k]||k;
+    if(CALC.just){if(/^[+−×÷^]/.test(t)||t==='^2')CALC.s='Ans';else CALC.s='';}CALC.s+=t;}
+  CALC.just=false;calcShow();}
+function calcRun(){if(!CALC.s)return;let s=CALC.s;const o=(s.match(/\(/g)||[]).length-(s.match(/\)/g)||[]).length;for(let i=0;i<o;i++)s+=')';
+  try{const v=calcEval(s);if(!isFinite(v))throw 0;CALC.ans=v;CALC.res=fmtC(v);CALC.s=s;}catch(_){CALC.res='Error de sintaxis';}CALC.just=true;calcShow();}
+function fmtC(v){if(v!==0&&(Math.abs(v)>=1e10||Math.abs(v)<1e-6)){let [m,e]=v.toExponential(7).split('e');m=m.replace(/\.?0+$/,'');return m+'E'+(+e);}return String(parseFloat(v.toPrecision(10)));}
+function calcEval(s){let i=0;const pk=()=>s[i];
+  const num=()=>{const m=s.slice(i).match(/^(\d+\.?\d*|\.\d+)(E[+\-−]?\d+)?/);if(!m)throw 0;i+=m[0].length;return Number(m[0].replace('−','-'));};
+  const prim=()=>{if(s.startsWith('Ans',i)){i+=3;return CALC.ans;}const c=pk();if(c==='('){i++;const v=expr();if(pk()!==')')throw 0;i++;return v;}if(c==='√'){i++;return Math.sqrt(unary());}return num();};
+  const pow=()=>{const b=prim();if(pk()==='^'){i++;return Math.pow(b,unary());}return b;};
+  const unary=()=>{if(pk()==='−'||pk()==='-'){i++;return -unary();}if(pk()==='+'){i++;return unary();}return pow();};
+  const term=()=>{let v=unary();for(;;){const c=pk();if(c==='×'||c==='*'){i++;v*=unary();}else if(c==='÷'||c==='/'){i++;v/=unary();}else if(c==='('||c==='√'||s.startsWith('Ans',i)){v*=unary();}else break;}return v;};
+  const expr=()=>{let v=term();for(;;){const c=pk();if(c==='+'){i++;v+=term();}else if(c==='−'||c==='-'){i++;v-=term();}else break;}return v;};
+  const v=expr();if(i<s.length)throw 0;return v;}
+$('#ckeys').addEventListener('click',e=>{const b=e.target.closest('[data-ck]');if(b)cIn(b.dataset.ck);});
+function calcKey(e){if(!$('#calc').classList.contains('on')||guard)return;const a=document.activeElement;if(a&&a.tagName==='INPUT')return;if(e.ctrlKey||e.metaKey||e.altKey)return;
+  const m={'*':'×','/':'÷','-':'−','+':'+','(':'(',')':')','.':'.',',':'.','^':'xʸ','Enter':'=','=':'=','Backspace':'DEL','Escape':'AC','e':'EXP','E':'EXP'};
+  let k=/^\d$/.test(e.key)?e.key:m[e.key];if(k){e.preventDefault();cIn(k);}}
+/* paneles */
+const toggle=id=>{if(innerWidth<=640)$('#'+(id==='calc'?'tabla':'calc')).classList.remove('on');$('#'+id).classList.toggle('on');};
+$('#bCalc').onclick=()=>toggle('calc');$('#bTab').onclick=()=>toggle('tabla');
+document.addEventListener('click',e=>{const c=e.target.closest('[data-close]');if(c)$('#'+c.dataset.close).classList.remove('on');});
+$$('[data-drag]').forEach(h=>{let sx,sy,ox,oy,el=$('#'+h.dataset.drag);
+  h.addEventListener('pointerdown',e=>{if(e.target.tagName==='BUTTON'||innerWidth<=640)return;const r=el.getBoundingClientRect();sx=e.clientX;sy=e.clientY;ox=r.left;oy=r.top;h.setPointerCapture(e.pointerId);
+    const mv=ev=>{el.style.left=Math.max(0,Math.min(innerWidth-80,ox+ev.clientX-sx))+'px';el.style.top=Math.max(0,Math.min(innerHeight-40,oy+ev.clientY-sy))+'px';el.style.right='auto';el.style.bottom='auto';};
+    const up=()=>{h.removeEventListener('pointermove',mv);h.removeEventListener('pointerup',up);};h.addEventListener('pointermove',mv);h.addEventListener('pointerup',up);});});
+window.addEventListener('pagehide',save);
+})();
+
+</script>
+</body>
+</html>

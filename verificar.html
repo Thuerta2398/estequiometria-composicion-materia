@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Verificar comprobante · Estequiometría</title>
+<style>
+:root{--bg:#f6f4f5;--ink:#1f2430;--mut:#5f6675;--line:#e4e1e6;--acc:#7b1e3a;--ok:#15803d;--bad:#b91c1c}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+header{background:linear-gradient(110deg,#4a0f22,var(--acc));color:#fff;padding:16px 20px}header h1{margin:0;font-size:1.3rem}header p{margin:2px 0 0;opacity:.85;font-size:.9rem}
+main{max-width:760px;margin:0 auto;padding:16px 14px 40px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 18px;margin-bottom:16px}
+.res{border-radius:12px;padding:12px 14px;font-weight:700;font-size:1.12rem;margin-bottom:10px}.res.ok{background:#e7f6ec;color:#14532d}.res.bad{background:#fdecec;color:#7f1d1d}
+table{width:100%;border-collapse:collapse}td,th{padding:6px 4px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}td.r,th.r{text-align:right}
+label{display:block;font-weight:600;margin-top:8px;font-size:.92rem}input{display:block;width:100%;font:inherit;padding:8px 10px;border:2px solid var(--line);border-radius:10px;margin-top:3px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 10px}.g2{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+button{font:inherit;background:var(--acc);color:#fff;border:0;border-radius:11px;padding:10px 16px;font-weight:700;cursor:pointer;margin-top:12px}
+.small{font-size:.85rem;color:var(--mut)}.warn{color:#b45309;font-weight:700}
+.mk{display:inline-block;min-width:34px;text-align:center;border-radius:7px;padding:0 4px;margin:1px;font-weight:800;font-size:.8rem}.m2{background:#e7f6ec;color:#15803d}.m1{background:#fef3c7;color:#92400e}.m0{background:#fdecec;color:#b91c1c}.mx{background:#eee;color:#888}
+.it{border-top:1px solid var(--line);padding:10px 0}.it .q{margin-bottom:4px}.it .a{background:#f3f7ee;border-radius:8px;padding:5px 9px;display:inline-block;font-weight:700}
+.eq{background:#faf8f9;border:1px dashed #d9cfd4;border-radius:8px;padding:6px 10px;margin:6px 0;text-align:center;overflow-x:auto;white-space:nowrap}.eq .st{font-size:.74em;color:var(--mut)}.eq .ar{color:var(--acc);margin:0 6px}.cf{color:var(--acc)}
+sub,sup{font-size:.72em;line-height:0}details summary{cursor:pointer;color:var(--acc);font-weight:600}
+table.tsol td,table.tsol th{border:1px solid #d9dfe9;padding:3px 8px;text-align:center;font-size:.88rem}
+</style>
+</head>
+<body>
+<header><h1>Verificar comprobante</h1><p>Estequiometría · Composición de la Materia · CEUX Ensenada (uso docente)</p></header>
+<main>
+  <div id="out"></div>
+  <form class="card" id="f">
+    <b>Captura manual</b>
+    <p class="small" style="margin:2px 0 0">Si no puedes escanear el QR, copia los datos exactamente como aparecen en el comprobante. En «Resultados» escribe, en orden, un carácter por reactivo (1 al 15, con 14a y 14b): 2 = ✓, 1 = ½, 0 = ✗.</p>
+    <label>Nombre<input id="n"></label>
+    <div class="g3"><label>Matrícula<input id="m"></label><label>Grupo<input id="g" placeholder="— si está vacío"></label><label>Versión<input id="ver"></label></div>
+    <div class="g2"><label>Inicio<input id="t0" placeholder="2026-11-17 10:05"></label><label>Fin<input id="t1" placeholder="2026-11-17 11:02"></label></div>
+    <div class="g3"><label>Tiempo activo (min)<input id="act" inputmode="numeric"></label><label>Tiempo total (min)<input id="tot" inputmode="numeric"></label><label>Tiempo fuera (min)<input id="outm" inputmode="numeric"></label></div>
+    <div class="g3"><label>Salidas<input id="sal" inputmode="numeric"></label><label>Copiar/pegar<input id="pg" inputmode="numeric"></label><label>Recargas<input id="rc" inputmode="numeric"></label></div>
+    <div class="g3"><label>Pantalla completa (sí/no)<input id="fs" value="sí"></label><label>Resultados (16 car.)<input id="r" placeholder="2212102221221221"></label><label>Código<input id="c" placeholder="XXXX-XXXX"></label></div>
+    <button type="submit">Verificar</button>
+  </form>
+  <form class="card" id="fs2">
+    <b>Solucionario por matrícula</b>
+    <p class="small" style="margin:2px 0 0">Genera los mismos reactivos que vio el estudiante, con sus respuestas.</p>
+    <label>Matrícula<input id="sm"></label><button type="submit">Ver reactivos y respuestas</button>
+    <div id="solout"></div>
+  </form>
+</main>
+<script>
+/* ===== Núcleo compartido: masas, fórmulas, generador por matrícula y verificación ===== */
+const ACT={id:'ESTEQ-T5',ver:'v1',salt:'CEUX·BIO·ESTEQ·T5·2026·TH',parts:16,NA:6.022e23};
+
+function cyrb53(str,seed){seed=seed||0;let h1=0xdeadbeef^seed,h2=0x41c6ce57^seed;
+  for(let i=0,ch;i<str.length;i++){ch=str.charCodeAt(i);h1=Math.imul(h1^ch,2654435761);h2=Math.imul(h2^ch,1597334677);}
+  h1=Math.imul(h1^(h1>>>16),2246822507);h1^=Math.imul(h2^(h2>>>13),3266489909);
+  h2=Math.imul(h2^(h2>>>16),2246822507);h2^=Math.imul(h1^(h1>>>13),3266489909);
+  return 4294967296*(2097151&h2)+(h1>>>0);}
+const norm=v=>String(v||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toUpperCase().replace(/\s+/g,' ').trim();
+const normMat=m=>String(m||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+const seedOf=m=>cyrb53(normMat(m)+'|'+ACT.salt,11)%4294967296;
+const verOf=m=>seedOf(m).toString(36).toUpperCase().slice(-4).padStart(4,'0');
+function code8(str){const c=cyrb53(str+'|'+ACT.salt,7).toString(36).toUpperCase().padStart(11,'0').slice(-8);return c.slice(0,4)+'-'+c.slice(4);}
+const sumStr=d=>[ACT.ver,norm(d.n),normMat(d.m),norm(d.g),String(d.t0).trim(),String(d.t1).trim(),+d.act,+d.tot,+d.out,+d.sal,+d.pg,+d.rc,+d.fs,String(d.r),String(d.ver)].join('|');
+const b64e=s=>btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const b64d=s=>{s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';return decodeURIComponent(escape(atob(s)));};
+const esc=v=>String(v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- Masas atómicas (uma), 2 decimales; base: IUPAC (Prohaska et al., 2022) ---------- */
+const MASAS={H:1.01,C:12.01,N:14.01,O:16.00,Na:22.99,Mg:24.31,Al:26.98,P:30.97,S:32.07,Cl:35.45,K:39.10,Ca:40.08,Mn:54.94,Fe:55.85,Co:58.93,Cu:63.55,Br:79.90};
+const ZNUM={H:1,C:6,N:7,O:8,Na:11,Mg:12,Al:13,P:15,S:16,Cl:17,K:19,Ca:20,Mn:25,Fe:26,Co:27,Cu:29,Br:35,Hg:80};
+const ELNOM={H:'hidrógeno',C:'carbono',N:'nitrógeno',O:'oxígeno',Na:'sodio',Mg:'magnesio',Al:'aluminio',P:'fósforo',S:'azufre',Cl:'cloro',K:'potasio',Ca:'calcio',Mn:'manganeso',Fe:'hierro',Co:'cobalto',Cu:'cobre',Br:'bromo',Hg:'mercurio'};
+const ESTADO={s:'sólido',l:'líquido',g:'gas',aq:'disolución acuosa'};
+
+/* ---------- Fórmulas ---------- */
+function parseF(f){let i=0;
+  const num=()=>{let s='';while(i<f.length&&/\d/.test(f[i]))s+=f[i++];return s?+s:1;};
+  function group(){const m={},order=[];const add=(e,c)=>{if(!(e in m)){m[e]=0;order.push(e);}m[e]+=c;};
+    while(i<f.length&&f[i]!==')'){
+      if(f[i]==='('){i++;const g=group();i++;const n=num();g.forEach(([e,c])=>add(e,c*n));}
+      else{let e=f[i++];while(i<f.length&&/[a-z]/.test(f[i]))e+=f[i++];add(e,num());}}
+    return order.map(e=>[e,m[e]]);}
+  return group();}
+const fmtF=f=>f.replace(/(\d+)/g,'<sub>$1</sub>');
+const SUBD='₀₁₂₃₄₅₆₇₈₉';
+const uniF=f=>f.replace(/\d/g,d=>SUBD[d]);
+const MM=f=>parseF(f).reduce((s,[e,n])=>s+n*MASAS[e],0);
+const cnt=(f,e)=>{const x=parseF(f).find(p=>p[0]===e);return x?x[1]:0;};
+
+/* ---------- Números ---------- */
+const fx=(v,d)=>Number(v).toFixed(d);
+function sig(v,n){n=n||4;if(v===0)return'0';const e=Math.floor(Math.log10(Math.abs(v)));
+  if(e>=6||e<=-4){let m=v/Math.pow(10,e);let mm=m.toFixed(n-1);if(Math.abs(+mm)>=10){mm=(m/10).toFixed(n-1);return mm+' × 10<sup>'+(e+1)+'</sup>';}return mm+' × 10<sup>'+e+'</sup>';}
+  return String(Number(v.toPrecision(n)));}
+function sigTxt(v,n){return sig(v,n).replace(' × 10<sup>','e').replace('</sup>','');}
+function parseNum(s){s=String(s||'').trim().replace(/\s+/g,'').replace(/,/g,'.').replace(/−/g,'-');
+  if(!s)return NaN;
+  s=s.replace(/[x×*·]10\^?\(?([+\-]?\d+)\)?$/i,'e$1');
+  if(!/^[+\-]?(\d+\.?\d*|\.\d+)(e[+\-]?\d+)?$/i.test(s))return NaN;return Number(s);}
+
+/* ---------- Bancos ---------- */
+const IONICOS=[['CaCl2','cloruro de calcio'],['Na2CO3','carbonato de sodio'],['Al2(SO4)3','sulfato de aluminio'],['Mg(OH)2','hidróxido de magnesio'],['KNO3','nitrato de potasio'],['Ca3(PO4)2','fosfato de calcio'],['Fe2O3','óxido de hierro(III)'],['CuSO4','sulfato de cobre(II)'],['NaHCO3','bicarbonato de sodio'],['K2SO4','sulfato de potasio'],['Ca(NO3)2','nitrato de calcio'],['(NH4)2SO4','sulfato de amonio'],['MgSO4','sulfato de magnesio'],['KMnO4','permanganato de potasio'],['CaCO3','carbonato de calcio'],['Na3PO4','fosfato de sodio'],['FeCl3','cloruro de hierro(III)'],['MgCl2','cloruro de magnesio']];
+const MOLECULARES=[['C6H12O6','glucosa'],['C12H22O11','sacarosa'],['C2H5OH','etanol'],['C3H6O3','ácido láctico'],['CO(NH2)2','urea'],['C2H5NO2','glicina'],['C8H10N4O2','cafeína'],['C9H8O4','aspirina (ácido acetilsalicílico)'],['C3H8O3','glicerol'],['C6H8O7','ácido cítrico'],['C5H5N5','adenina'],['C4H4N2O2','uracilo'],['C6H8O6','ácido ascórbico (vitamina C)'],['CH3COOH','ácido acético'],['C3H7NO2','alanina'],['C27H46O','colesterol']];
+const ATOMOS=['Ca(NO3)2','Al2(SO4)3','Ca3(PO4)2','Mg(OH)2','(NH4)2SO4','Fe2(SO4)3','Cu(NO3)2','(NH4)3PO4','Al(OH)3','C6H12O6','C12H22O11','Ca(HCO3)2','Mg3(PO4)2','Fe(NO3)3'];
+const E=(r,p,t)=>({r,p,t});
+const ECUACIONES=[
+ E([[1,'N2','g'],[3,'H2','g']],[[2,'NH3','g']],'comb'),
+ E([[2,'Mg','s'],[1,'O2','g']],[[2,'MgO','s']],'comb'),
+ E([[1,'C3H6','g'],[1,'Br2','l']],[[1,'C3H6Br2','l']],'comb'),
+ E([[2,'Na','s'],[1,'Cl2','g']],[[2,'NaCl','s']],'comb'),
+ E([[1,'CaO','s'],[1,'H2O','l']],[[1,'Ca(OH)2','s']],'comb'),
+ E([[4,'Fe','s'],[3,'O2','g']],[[2,'Fe2O3','s']],'comb'),
+ E([[1,'SO3','g'],[1,'H2O','l']],[[1,'H2SO4','aq']],'comb'),
+ E([[4,'Al','s'],[3,'O2','g']],[[2,'Al2O3','s']],'comb'),
+ E([[1,'NH3','g'],[1,'HCl','g']],[[1,'NH4Cl','s']],'comb'),
+ E([[1,'CO2','g'],[1,'H2O','l']],[[1,'H2CO3','aq']],'comb'),
+ E([[1,'CaCO3','s']],[[1,'CaO','s'],[1,'CO2','g']],'desc'),
+ E([[2,'KClO3','s']],[[2,'KCl','s'],[3,'O2','g']],'desc'),
+ E([[2,'NaN3','s']],[[2,'Na','s'],[3,'N2','g']],'desc'),
+ E([[2,'H2O2','aq']],[[2,'H2O','l'],[1,'O2','g']],'desc'),
+ E([[2,'NaHCO3','s']],[[1,'Na2CO3','s'],[1,'H2O','g'],[1,'CO2','g']],'desc'),
+ E([[1,'Cu(OH)2','s']],[[1,'CuO','s'],[1,'H2O','l']],'desc'),
+ E([[2,'H2O','l']],[[2,'H2','g'],[1,'O2','g']],'desc'),
+ E([[1,'NH4Cl','s']],[[1,'NH3','g'],[1,'HCl','g']],'desc'),
+ E([[2,'HgO','s']],[[2,'Hg','l'],[1,'O2','g']],'desc'),
+ E([[1,'MgCO3','s']],[[1,'MgO','s'],[1,'CO2','g']],'desc'),
+ E([[1,'CH4','g'],[2,'O2','g']],[[1,'CO2','g'],[2,'H2O','g']],'cmb'),
+ E([[1,'C3H8','g'],[5,'O2','g']],[[3,'CO2','g'],[4,'H2O','g']],'cmb'),
+ E([[1,'C2H5OH','l'],[3,'O2','g']],[[2,'CO2','g'],[3,'H2O','g']],'cmb'),
+ E([[1,'C6H12O6','s'],[6,'O2','g']],[[6,'CO2','g'],[6,'H2O','l']],'cmb'),
+ E([[2,'C2H6','g'],[7,'O2','g']],[[4,'CO2','g'],[6,'H2O','g']],'cmb'),
+ E([[2,'C8H18','l'],[25,'O2','g']],[[16,'CO2','g'],[18,'H2O','g']],'cmb'),
+ E([[2,'CH3OH','l'],[3,'O2','g']],[[2,'CO2','g'],[4,'H2O','g']],'cmb'),
+ E([[1,'C12H22O11','s'],[12,'O2','g']],[[12,'CO2','g'],[11,'H2O','l']],'cmb'),
+ E([[2,'C4H10','g'],[13,'O2','g']],[[8,'CO2','g'],[10,'H2O','g']],'cmb'),
+ E([[1,'C2H4','g'],[3,'O2','g']],[[2,'CO2','g'],[2,'H2O','g']],'cmb')];
+const TIPO={comb:'Combinación',desc:'Descomposición',cmb:'Combustión'};
+const TIPO_EXP={comb:'dos o más sustancias se unen para formar un solo producto',desc:'una sola sustancia se separa en dos o más sustancias',cmb:'una sustancia (casi siempre un hidrocarburo o compuesto con C, H y O) reacciona rápidamente con O₂ y produce CO₂ y H₂O'};
+const EMP_PCT=[['CH2O','Es la fórmula empírica del formaldehído y también de la glucosa (C₆H₁₂O₆).'],['C3H4O3','Es la fórmula empírica del ácido ascórbico (vitamina C, C₆H₈O₆).'],['C3O2','Es el subóxido de carbono (Goldberg, 2005, ej. 7.12).'],['Na2S2O3','Es el tiosulfato de sodio (Goldberg, 2005, ej. 7.13).'],['FeSO4','Es el sulfato de hierro(II).'],['Co2O3','Es el óxido de cobalto(III).'],['MnO2','Es el óxido de manganeso(IV).'],['Al2S3','Es el sulfuro de aluminio.'],['N2O5','Es el pentóxido de dinitrógeno.'],['C2H6O','Es la fórmula del etanol.'],['C4H5N2O','Es la fórmula empírica de la cafeína (C₈H₁₀N₄O₂).'],['C2H3','Corresponde, por ejemplo, al C₈H₁₂ (Goldberg, 2005, prob. 7.68).'],['P2O5','Es la fórmula empírica del decóxido de tetrafósforo (P₄O₁₀).'],['C5H7N','Es la fórmula empírica de la nicotina (C₁₀H₁₄N₂).'],['KClO3','Es el clorato de potasio.']];
+const EMP_MAS=[['Fe3O4','magnetita, un óxido de hierro (Goldberg, 2005, ej. 7.14)'],['Fe2O3','un óxido de hierro'],['Cu2O','un óxido de cobre'],['Al2O3','un óxido de aluminio'],['Mg3N2','un nitruro de magnesio'],['P2O5','un óxido de fósforo'],['CaCl2','un cloruro de calcio'],['Na2O','un óxido de sodio'],['SO3','un óxido de azufre'],['K2S','un sulfuro de potasio'],['CuCl2','un cloruro de cobre']];
+
+/* ---------- Ecuaciones (HTML) ---------- */
+const sp=(c,f,s)=>(c>1?'<b class="cf">'+c+'</b>&#8239;':'')+fmtF(f)+'<span class="st">('+s+')</span>';
+const eqHTML=q=>'<div class="eq">'+q.r.map(x=>sp(...x)).join(' + ')+' <span class="ar">⟶</span> '+q.p.map(x=>sp(...x)).join(' + ')+'</div>';
+
+/* ---------- Generador por matrícula ---------- */
+function genItems(mat){
+  const R=mulberry32(seedOf(mat));
+  const pick=a=>a[Math.floor(R()*a.length)];
+  const int=(a,b)=>a+Math.floor(R()*(b-a+1));
+  const real=(a,b,d)=>Number((a+R()*(b-a)).toFixed(d));
+  const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(R()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+  const used=new Set(),usedEq=new Set(),els=new Set();
+  const take=bank=>{let c,g=0;do{c=pick(bank);g++;}while(used.has(c[0])&&g<200);used.add(c[0]);return c;};
+  const takeEq=fil=>{const pool=ECUACIONES.map((q,i)=>i).filter(i=>!usedEq.has(i)&&fil(ECUACIONES[i]));const i=pick(pool);usedEq.add(i);return ECUACIONES[i];};
+  const useEls=f=>parseF(f).forEach(([e])=>els.add(e));
+  const r2=v=>Math.round(v*100)/100;
+  const pfLines=f=>parseF(f).map(([e,n])=>`${e}: ${n} × ${fx(MASAS[e],2)} = ${fx(n*MASAS[e],2)}`).join('<br>');
+  const items=[];
+  const NUMFMT='Escribe solo el número, con punto decimal. Ejemplo de formato: ';
+  /* 1 · Conservación de la masa */
+  {const v=int(0,3);let st,ans,sol,eq;
+    if(v===0){const a=real(20,80,2),b=r2(a*MM('CaO')/MM('CaCO3'));ans=r2(a-b);eq=ECUACIONES[10];
+      st=`Al calentar <b>${fx(a,2)} g</b> de carbonato de calcio (CaCO<sub>3</sub>) se obtienen <b>${fx(b,2)} g</b> de óxido de calcio (CaO) y se libera dióxido de carbono:${eqHTML(eq)}¿Cuántos gramos de CO<sub>2</sub> se liberaron?`;
+      sol=`Masa de reactivos = masa de productos.<br>${fx(a,2)} g = ${fx(b,2)} g + <i>m</i>(CO<sub>2</sub>) ⇒ <i>m</i>(CO<sub>2</sub>) = ${fx(a,2)} − ${fx(b,2)} = <b>${fx(ans,2)} g</b>`;}
+    else if(v===1){const a=real(2,30,2),c=r2(a*MM('MgO')/MM('Mg'));ans=r2(c-a);eq=ECUACIONES[1];
+      st=`Se queman <b>${fx(a,2)} g</b> de magnesio en aire y se forman <b>${fx(c,2)} g</b> de óxido de magnesio:${eqHTML(eq)}¿Cuántos gramos de O<sub>2</sub> reaccionaron?`;
+      sol=`${fx(a,2)} g + <i>m</i>(O<sub>2</sub>) = ${fx(c,2)} g ⇒ <i>m</i>(O<sub>2</sub>) = ${fx(c,2)} − ${fx(a,2)} = <b>${fx(ans,2)} g</b>`;}
+    else if(v===2){const a=real(10,60,2),b=r2(a*MM('O2')/(2*MM('H2O2')));ans=r2(a-b);eq=ECUACIONES[13];
+      st=`Se descomponen por completo <b>${fx(a,2)} g</b> de peróxido de hidrógeno y se recogen <b>${fx(b,2)} g</b> de oxígeno:${eqHTML(eq)}¿Cuántos gramos de agua se formaron?`;
+      sol=`${fx(a,2)} g = <i>m</i>(H<sub>2</sub>O) + ${fx(b,2)} g ⇒ <i>m</i>(H<sub>2</sub>O) = ${fx(a,2)} − ${fx(b,2)} = <b>${fx(ans,2)} g</b>`;}
+    else{const a=real(4,40,2),b=r2(a*2*MM('O2')/MM('CH4')),c=r2(a*MM('CO2')/MM('CH4'));ans=r2(a+b-c);eq=ECUACIONES[20];
+      st=`En la combustión completa de <b>${fx(a,2)} g</b> de metano se consumen <b>${fx(b,2)} g</b> de oxígeno y se forman <b>${fx(c,2)} g</b> de dióxido de carbono:${eqHTML(eq)}¿Cuántos gramos de agua se formaron?`;
+      sol=`${fx(a,2)} g + ${fx(b,2)} g = ${fx(c,2)} g + <i>m</i>(H<sub>2</sub>O) ⇒ <i>m</i>(H<sub>2</sub>O) = ${fx(a+b,2)} − ${fx(c,2)} = <b>${fx(ans,2)} g</b>`;}
+    usedEq.add(ECUACIONES.indexOf(eq));
+    items.push({n:1,blk:0,title:'Ley de conservación de la masa',stmt:st,sol,hint:'La masa total de los reactivos es igual a la masa total de los productos.',
+      parts:[{type:'num',ans,tol:{rel:.01,abs:.02},unit:'g',fmt:NUMFMT+'12.35'}]});}
+  /* 2 · Anatomía de la ecuación */
+  {const q=takeEq(q=>q.r.concat(q.p).some(x=>x[0]>1));const v=int(0,2);let st,opts,sol;
+    const names=a=>a.map(x=>fmtF(x[1])).join(', ');
+    if(v===0){const cand=[[names(q.r),1],[names(q.p),0],[fmtF(q.r[0][1])+', '+fmtF(q.p[q.p.length-1][1]),0],[names(q.r.concat(q.p)),0]];
+      const seen=new Set();opts=cand.filter(c=>!seen.has(c[0])&&seen.add(c[0]));
+      st=`En la siguiente ecuación química, ¿cuáles sustancias son los <b>reactivos</b>?${eqHTML(q)}`;
+      sol=`Los reactivos se escriben a la <b>izquierda</b> de la flecha: ${names(q.r)}. Los productos van a la derecha: ${names(q.p)}.`;}
+    else if(v===1){const x=pick(q.r.concat(q.p));opts=Object.keys(ESTADO).map(k=>['Que '+fmtF(x[1])+' está en estado <b>'+ESTADO[k]+'</b>',k===x[2]?1:0]);
+      st=`En la ecuación siguiente, ¿qué indica el símbolo <b>(${x[2]})</b> escrito a la derecha de ${fmtF(x[1])}?${eqHTML(q)}`;
+      sol=`Los símbolos entre paréntesis indican el estado físico: (s) sólido, (l) líquido, (g) gas, (aq) disolución acuosa. Aquí, (${x[2]}) = ${ESTADO[x[2]]}.`;}
+    else{const x=pick(q.r.concat(q.p).filter(y=>y[0]>1)),f=fmtF(x[1]);
+      opts=[[`Que participan ${x[0]} moléculas (o unidades fórmula) de ${f}`,1],[`Que cada molécula de ${f} tiene ${x[0]} átomos`,0],[`Que se forman ${x[0]} gramos de ${f}`,0],[`Que ${f} tiene ${x[0]} elementos distintos`,0]];
+      st=`En la ecuación siguiente, ¿qué indica el coeficiente <b>${x[0]}</b> escrito delante de ${f}?${eqHTML(q)}`;
+      sol=`Los <b>coeficientes</b> indican el número de moléculas (o unidades fórmula, o moles) de cada sustancia; los <b>subíndices</b> indican cuántos átomos de cada elemento hay dentro de una molécula.`;}
+    items.push({n:2,blk:0,title:'Anatomía de una ecuación química',stmt:st,sol,hint:'',parts:[{type:'mc',opts:shuf(opts)}]});}
+  /* 3 · Átomos con coeficiente y subíndice */
+  {const f=pick(ATOMOS),k=int(2,7),pf=parseF(f);const multi=pf.filter(p=>p[1]>1);const [e,n]=pick(multi.length?multi:pf);const ans=k*n;
+    const par=f.includes('(')?' El subíndice que sigue a un paréntesis multiplica a todo lo que está dentro de él.':'';
+    items.push({n:3,blk:1,title:'Coeficientes y subíndices',stmt:`¿Cuántos átomos de ${ELNOM[e]} (${e}) hay en <span class="eqi"><b class="cf">${k}</b>&#8239;${fmtF(f)}</span>?`,
+      sol:`En una unidad de ${fmtF(f)} hay <b>${n}</b> átomos de ${e}.${par}<br>Con el coeficiente: ${k} × ${n} = <b>${ans}</b> átomos de ${e}.`,hint:'Primero cuenta los átomos en una sola fórmula (cuidado con los paréntesis) y luego multiplica por el coeficiente.',
+      parts:[{type:'int',ans,unit:'átomos',fmt:'Escribe un número entero. Ejemplo de formato: 18'}]});}
+  /* 4 · Conteo total de átomos en reactivos */
+  {const q=takeEq(q=>true);const rel=[...new Set(q.r.flatMap(x=>parseF(x[1]).map(p=>p[0])))];const e=pick(rel);
+    const terms=q.r.filter(x=>cnt(x[1],e)>0).map(x=>[x[0],x[1],cnt(x[1],e)]);const ans=terms.reduce((s,t)=>s+t[0]*t[2],0);
+    items.push({n:4,blk:1,title:'Conservación de átomos',stmt:`En la ecuación balanceada siguiente, ¿cuántos átomos de ${ELNOM[e]} (${e}) hay <b>en total del lado de los reactivos</b>?${eqHTML(q)}`,
+      sol:terms.map(t=>`${fmtF(t[1])}: ${t[0]} × ${t[2]} = ${t[0]*t[2]}`).join('<br>')+`<br>Total = <b>${ans}</b> átomos de ${e}. Como la ecuación está balanceada, del lado de los productos hay el mismo número.`,
+      hint:'Para cada reactivo que contiene el elemento, multiplica el coeficiente por el subíndice y suma.',parts:[{type:'int',ans,unit:'átomos',fmt:'Escribe un número entero. Ejemplo de formato: 14'}]});}
+  /* 5 y 6 · Tipos de reacción */
+  {const tps=shuf(['comb','desc','cmb']);[0,1].forEach(j=>{const t=tps[j];const q=takeEq(q=>q.t===t);
+    items.push({n:5+j,blk:2,title:'Tipos de reacción',stmt:`Clasifica la reacción siguiente:${eqHTML(q)}`,
+      sol:`Es una reacción de <b>${TIPO[t].toLowerCase()}</b>: ${TIPO_EXP[t]}.`,hint:'',parts:[{type:'mc',opts:['comb','desc','cmb'].map(k=>[TIPO[k],k===t?1:0])}]});});}
+  /* 7 · Peso fórmula (iónico) */
+  {const [f,nm]=take(IONICOS);useEls(f);const ans=MM(f);
+    items.push({n:7,blk:3,title:'Peso fórmula (PF)',stmt:`Calcula el peso fórmula del ${nm}, <span class="eqi">${fmtF(f)}</span>, en uma. Usa la tabla de masas atómicas de la actividad.`,
+      sol:pfLines(f)+`<br><b>PF = ${fx(ans,2)} uma</b>`,hint:'Suma las masas atómicas de todos los átomos de la fórmula (multiplica cada masa por su subíndice; ojo con los paréntesis).',
+      parts:[{type:'num',ans,tol:{rel:.005,abs:.05},unit:'uma',fmt:NUMFMT+'111.18'}]});}
+  /* 8 · Peso molecular */
+  {const [f,nm]=take(MOLECULARES);useEls(f);const ans=MM(f);
+    items.push({n:8,blk:3,title:'Peso molecular (PM)',stmt:`Calcula el peso molecular de la molécula de ${nm}, <span class="eqi">${fmtF(f)}</span>, en uma.`,
+      sol:pfLines(f)+`<br><b>PM = ${fx(ans,2)} uma</b>`,hint:'Suma las masas atómicas: número de átomos de cada elemento × su masa atómica.',
+      parts:[{type:'num',ans,tol:{rel:.005,abs:.05},unit:'uma',fmt:NUMFMT+'180.18'}]});}
+  /* 9 · Composición porcentual */
+  {const [f,nm]=take(R()<.5?IONICOS:MOLECULARES);useEls(f);const pf=parseF(f);const [e,n]=pick(pf);const M=MM(f),ans=100*n*MASAS[e]/M;
+    items.push({n:9,blk:4,title:'Composición porcentual',stmt:`¿Qué porcentaje de la masa de ${nm} (<span class="eqi">${fmtF(f)}</span>) corresponde al ${ELNOM[e]}?`,
+      sol:`PF de ${fmtF(f)} = ${fx(M,2)} uma.<br>% ${e} = (${n} × ${fx(MASAS[e],2)} / ${fx(M,2)}) × 100 = <b>${fx(ans,2)} %</b>`,hint:'% elemento = (número de átomos × masa atómica ÷ PF del compuesto) × 100.',
+      parts:[{type:'num',ans,tol:{rel:0,abs:.25},unit:'%',fmt:NUMFMT+'40.04 (sin el signo %)'}]});}
+  /* 10 · Masa de un elemento en una muestra */
+  {const [f,nm]=take(R()<.5?IONICOS:MOLECULARES);useEls(f);const pf=parseF(f);const [e,n]=pick(pf);const m=real(10,120,1),M=MM(f),fr=n*MASAS[e]/M,ans=m*fr;
+    items.push({n:10,blk:4,title:'Masa de un elemento en una muestra',stmt:`¿Cuántos gramos de ${ELNOM[e]} hay en una muestra de <b>${fx(m,1)} g</b> de ${nm} (<span class="eqi">${fmtF(f)}</span>)?`,
+      sol:`Fracción de ${e} = ${n} × ${fx(MASAS[e],2)} / ${fx(M,2)} = ${fx(fr,4)} (${fx(100*fr,2)} %).<br><i>m</i>(${e}) = ${fx(m,1)} g × ${fx(fr,4)} = <b>${fx(ans,2)} g</b>`,
+      hint:'Calcula primero el % en masa del elemento y aplícalo a la masa de la muestra.',parts:[{type:'num',ans,tol:{rel:.01,abs:.02},unit:'g',fmt:NUMFMT+'20.53'}]});}
+  /* 11 · gramos → moles */
+  {const [f,nm]=take(R()<.5?IONICOS:MOLECULARES);useEls(f);const m=real(5,250,2),M=MM(f),ans=m/M;
+    items.push({n:11,blk:5,title:'Gramos a moles',stmt:`¿Cuántos moles hay en <b>${fx(m,2)} g</b> de ${nm} (<span class="eqi">${fmtF(f)}</span>)?`,
+      sol:`Masa molar = ${fx(M,2)} g/mol.<br><i>n</i> = ${fx(m,2)} g × (1 mol / ${fx(M,2)} g) = <b>${sig(ans,4)} mol</b>`,hint:'La masa molar (g/mol) tiene el mismo valor numérico que el peso fórmula en uma. Divide la masa entre la masa molar.',
+      parts:[{type:'num',ans,tol:{rel:.01,abs:0},unit:'mol',fmt:NUMFMT+'0.4572'}]});}
+  /* 12 · gramos → moléculas */
+  {const [f,nm]=take(MOLECULARES);useEls(f);const m=real(1,90,2),M=MM(f),n=m/M,ans=n*ACT.NA;
+    items.push({n:12,blk:5,title:'Gramos a moléculas',stmt:`¿Cuántas moléculas hay en <b>${fx(m,2)} g</b> de ${nm} (<span class="eqi">${fmtF(f)}</span>)? Usa <i>N</i><sub>A</sub> = 6.022 × 10<sup>23</sup> mol<sup>−1</sup>.`,
+      sol:`Masa molar = ${fx(M,2)} g/mol ⇒ <i>n</i> = ${fx(m,2)} / ${fx(M,2)} = ${sig(n,4)} mol.<br>Moléculas = ${sig(n,4)} mol × 6.022 × 10<sup>23</sup> mol<sup>−1</sup> = <b>${sig(ans,4)}</b>`,
+      hint:'Gramos → moles (divide entre la masa molar) → moléculas (multiplica por el número de Avogadro).',
+      parts:[{type:'num',ans,tol:{rel:.015,abs:0},unit:'moléculas',fmt:'Usa notación científica con «e». Ejemplo de formato: 3.011e23 (significa 3.011 × 10²³)'}]});}
+  /* 13 · gramos → átomos de un elemento */
+  {const [f,nm]=take(R()<.5?IONICOS:MOLECULARES);useEls(f);const pf=parseF(f);const multi=pf.filter(p=>p[1]>1);const [e,k]=pick(multi.length?multi:pf);const m=real(2,60,2),M=MM(f),n=m/M,ans=n*k*ACT.NA;
+    items.push({n:13,blk:5,title:'Gramos a átomos de un elemento',stmt:`¿Cuántos átomos de ${ELNOM[e]} hay en <b>${fx(m,2)} g</b> de ${nm} (<span class="eqi">${fmtF(f)}</span>)? Usa <i>N</i><sub>A</sub> = 6.022 × 10<sup>23</sup> mol<sup>−1</sup>.`,
+      sol:`<i>n</i>(${fmtF(f)}) = ${fx(m,2)} / ${fx(M,2)} = ${sig(n,4)} mol.<br>Cada unidad de ${fmtF(f)} tiene ${k} átomo(s) de ${e} ⇒ <i>n</i>(${e}) = ${k} × ${sig(n,4)} = ${sig(k*n,4)} mol.<br>Átomos de ${e} = ${sig(k*n,4)} × 6.022 × 10<sup>23</sup> = <b>${sig(ans,4)}</b>`,
+      hint:'Gramos → moles del compuesto → moles del elemento (multiplica por el subíndice) → átomos (× N_A).',
+      parts:[{type:'num',ans,tol:{rel:.015,abs:0},unit:'átomos',fmt:'Usa notación científica con «e». Ejemplo de formato: 1.204e24 (significa 1.204 × 10²⁴)'}]});}
+  /* 14 · Fórmula empírica desde % (guiada) */
+  {const [f,nota]=pick(EMP_PCT);useEls(f);const pf=parseF(f),M=MM(f);
+    let pc=pf.map(([e,n])=>r2(100*n*MASAS[e]/M));const dif=r2(100-pc.reduce((a,b)=>a+b,0));pc[pc.length-1]=r2(pc[pc.length-1]+dif);
+    const els=pf.map(p=>p[0]),mol=pc.map((p,i)=>p/MASAS[els[i]]),sub=pf.map(p=>p[1]);
+    items.push({n:14,blk:6,title:'Fórmula empírica a partir de la composición porcentual',
+      stmt:`El análisis de un compuesto da la composición en masa siguiente: ${els.map((e,i)=>`<b>${fx(pc[i],2)} % ${e}</b>`).join(', ')}.<br>Supón una muestra de 100 g (así, cada % equivale a gramos).`,
+      sol:empSol(els,pc,'%')+`<br>${nota}`,hint:'',
+      parts:[{type:'molm',label:'a) Moles de cada elemento en 100 g de muestra',els,ans:mol,tol:{rel:.02,abs:0},fmt:NUMFMT+'5.105',hint:'moles = gramos ÷ masa atómica (no uses la masa de la molécula diatómica, p. ej., O = 16.00, no 32.00).'},
+             {type:'sub',label:'b) Fórmula empírica: escribe el subíndice de cada elemento',els,ans:sub,hint:'Divide todos los moles entre el menor. Si queda un decimal como .50, .33, .25 o .67, multiplica todo por 2, 3, 4 o 3.'}]});}
+  /* 15 · Fórmula empírica desde masas */
+  {const [f,nm]=pick(EMP_MAS);useEls(f);const pf=parseF(f),M=MM(f);const ms=real(1.5,25,2);
+    const els=pf.map(p=>p[0]);let g=pf.map(([e,n])=>Number((ms*n*MASAS[e]/M).toFixed(3)));g[g.length-1]=Number((ms-g.slice(0,-1).reduce((a,b)=>a+b,0)).toFixed(3));
+    items.push({n:15,blk:6,title:'Fórmula empírica a partir de masas',
+      stmt:`Una muestra de <b>${fx(ms,2)} g</b> de ${nm} contiene ${els.map((e,i)=>`<b>${fx(g[i],3)} g de ${ELNOM[e]}</b>`).join(' y ')}. Determina su fórmula empírica.`,
+      sol:empSol(els,g,'g'),hint:'Como ya tienes gramos, pasa directo a moles; divide entre el menor y, si hace falta, multiplica por un entero pequeño.',
+      parts:[{type:'sub',label:'Escribe el subíndice de cada elemento',els,ans:pf.map(p=>p[1])}]});}
+  const elList=[...els].sort((a,b)=>ZNUM[a]-ZNUM[b]);
+  let pid=0;items.forEach(it=>it.parts.forEach(p=>{p.pid=pid++;p.max=p.type==='mc'?1:2;}));
+  return{items,els:elList,ver:verOf(mat)};}
+
+function empSol(els,g,mode){const mol=g.map((x,i)=>x/MASAS[els[i]]),mn=Math.min(...mol),r=mol.map(m=>m/mn);
+  let k=1;for(const t of [1,2,3,4,5,6]){if(r.every(x=>Math.abs(x*t-Math.round(x*t))<=.08)){k=t;break;}}
+  const rows=els.map((e,i)=>`<tr><td>${e}</td><td>${fx(g[i],mode==='%'?2:3)} g</td><td>${fx(g[i],mode==='%'?2:3)} / ${fx(MASAS[e],2)} = ${fx(mol[i],4)}</td><td>${fx(r[i],3)}</td>${k>1?`<td>${fx(r[i]*k,2)}</td>`:''}<td><b>${Math.round(r[i]*k)}</b></td></tr>`).join('');
+  const f=els.map((e,i)=>e+(Math.round(r[i]*k)>1?Math.round(r[i]*k):'')).join('');
+  return `<table class="tsol"><tr><th>Elemento</th><th>Masa</th><th>Moles</th><th>÷ ${fx(mn,4)}</th>${k>1?`<th>× ${k}</th>`:''}<th>Subíndice</th></tr>${rows}</table>${k>1?`Como la razón no era entera, se multiplicó por ${k}.<br>`:''}Fórmula empírica: <b>${fmtF(f)}</b>`;}
+function empFormula(els,sub){return els.map((e,i)=>e+(sub[i]>1?sub[i]:'')).join('');}
+
+const BLOQUES=['Conservación de la masa y ecuaciones','Subíndices y coeficientes','Tipos de reacción','Peso fórmula y peso molecular','Composición porcentual','Mol y masa molar','Fórmulas empíricas'];
+const BLOQ_CORTO=['Ecuaciones','Subíndices','Tipos','PF y PM','% masa','Moles','F. empírica'];
+const PART_LABEL=['1','2','3','4','5','6','7','8','9','10','11','12','13','14a','14b','15'];
+function gradeFromR(r){let p=0;for(const ch of String(r)){if(ch==='2')p+=1;else if(ch==='1')p+=.5;}return{pts:p,cal:Math.round(100*p/ACT.parts)/10};}
+
+</script>
+<script>
+(function(){
+const $=s=>document.getElementById(s);
+const fmtMin=m=>m>=60?Math.floor(m/60)+' h '+(m%60)+' min':m+' min';
+const cleanCode=v=>{const s=String(v||'').toUpperCase().replace(/[^A-Z0-9]/g,'');return s.length===8?s.slice(0,4)+'-'+s.slice(4):s;};
+function blocksHTML(r){let pid=0;return BLOQUES.map((b,bi)=>{const n=[2,2,2,2,2,3,3][bi];let pts=0,mk='';for(let k=0;k<n;k++,pid++){const c=r[pid]||'-';if(c==='2')pts+=1;else if(c==='1')pts+=.5;mk+=`<span class="mk m${c==='-'?'x':c}">${PART_LABEL[pid]}${c==='2'?'✓':c==='1'?'½':c==='0'?'✗':''}</span>`;}
+  return `<tr><td>${bi+1}. ${b}<br>${mk}</td><td class="r">${pts}/${n}</td></tr>`;}).join('');}
+function show(ok,d){const g=gradeFromR(d.r),verOk=verOf(d.m)===String(d.ver).toUpperCase();
+  $('out').innerHTML=`<div class="card"><div class="res ${ok?'ok':'bad'}">${ok?'✓ Comprobante válido':'✗ El código no coincide con los datos'}</div>
+  <table><tr><td>Estudiante</td><td class="r">${esc(d.n)}</td></tr><tr><td>Matrícula · Grupo</td><td class="r">${esc(d.m)} · ${esc(d.g)}</td></tr>
+  <tr><td>Versión de reactivos</td><td class="r">${esc(d.ver)} ${verOk?'':'<span class="warn">(no corresponde a la matrícula)</span>'}</td></tr>
+  <tr><td>Inicio → fin</td><td class="r">${esc(d.t0)} → ${esc(d.t1)}</td></tr>
+  <tr><td>Tiempo activo · total · fuera</td><td class="r">${fmtMin(+d.act)} · ${fmtMin(+d.tot)} · ${fmtMin(+d.out)}</td></tr>
+  <tr><td>Salidas · copiar/pegar · recargas</td><td class="r"><span class="${+d.sal||+d.pg?'warn':''}">${d.sal} · ${d.pg}</span> · ${d.rc}</td></tr>
+  <tr><td>Pantalla completa</td><td class="r">${+d.fs?'sí':'no disponible'}</td></tr></table>
+  <table style="margin-top:10px"><tr><th>Bloque</th><th class="r">Puntos</th></tr>${blocksHTML(String(d.r))}<tr><th>Calificación</th><th class="r">${g.pts}/${ACT.parts} · ${g.cal.toFixed(1)}</th></tr></table>
+  <p class="small">Código: ${esc(d.c)}</p>
+  ${ok?'':'<p class="small">Si capturaste los datos a mano, revisa que coincidan exactamente con la imagen.</p>'}</div>`;}
+const h=location.hash.match(/#d=([A-Za-z0-9_-]+)/);
+if(h){try{const d=JSON.parse(b64d(h[1]));show(code8(sumStr(d))===d.c,d);$('sm').value=d.m;}catch(_){$('out').innerHTML='<div class="card"><div class="res bad">QR no válido: no se pudieron leer los datos.</div></div>';}}
+$('f').onsubmit=e=>{e.preventDefault();const v=id=>$(id).value.trim();
+  const d={n:v('n'),m:normMat(v('m')),g:v('g')||'—',t0:v('t0'),t1:v('t1'),act:+v('act'),tot:+v('tot'),out:+v('outm'),sal:+v('sal'),pg:+v('pg'),rc:+v('rc'),fs:/^s/i.test(v('fs'))?1:0,r:v('r').replace(/\s/g,''),ver:v('ver').toUpperCase(),c:cleanCode(v('c'))};
+  show(code8(sumStr(d))===d.c,d);window.scrollTo(0,0);};
+function ans(p){if(p.type==='mc')return p.opts.find(o=>o[1])[0];if(p.type==='num')return sig(p.ans,4)+' '+(p.unit||'');if(p.type==='int')return p.ans+' '+(p.unit||'');
+  if(p.type==='molm')return p.els.map((e,i)=>`${e}: ${sig(p.ans[i],4)} mol`).join(' · ');return fmtF(empFormula(p.els,p.ans));}
+$('fs2').onsubmit=e=>{e.preventDefault();const m=normMat($('sm').value);if(m.length<4)return;const G=genItems(m);
+  $('solout').innerHTML=`<p><b>Matrícula ${esc(m)} · versión ${G.ver}</b></p>`+G.items.map(it=>`<div class="it"><div class="q"><b>${it.n}. ${it.title}.</b> ${it.stmt}</div>
+    ${it.parts.map(p=>`<div>${p.label?p.label+': ':'Respuesta: '}<span class="a">${ans(p)}</span></div>`).join('')}
+    <details><summary>Solución</summary>${it.sol}</details></div>`).join('');};
+})();
+</script>
+</body>
+</html>
