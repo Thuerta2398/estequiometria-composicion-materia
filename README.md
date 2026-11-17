@@ -9,7 +9,7 @@ Cubre el Tema 5 hasta **cálculo de fórmulas empíricas**: conservación de la 
 - **Antitrampa:** pantalla completa obligatoria; si el estudiante sale, cambia de pestaña o la ventana pierde el foco, la pantalla se bloquea y se cuenta la salida y el tiempo fuera. Copiar, pegar, seleccionar, clic derecho, arrastrar e imprimir están deshabilitados; los intentos de copiar o pegar se registran. Se bloquea la inserción de bloques de texto. Marca de agua con nombre y matrícula. Se registran las recargas y se impide abrir la misma matrícula en dos pestañas.
 - **Sin límite de tiempo**, con registro del tiempo activo, el total y el tiempo fuera.
 - **Calificación:** numéricas con 2 intentos (1 y 0.5 pts); opción múltiple con 1 intento. La solución aparece al terminar cada reactivo. Los errores de formato no consumen intentos.
-- **Herramientas:** calculadora (EXP, potencias, raíz, Ans) y tabla de masas atómicas con solo los elementos que usa ese estudiante.
+- **Herramientas** (botones flotantes a la derecha, accesos directos en cada reactivo que las requiere y aviso al entrar a cada bloque o al fallar un cálculo): calculadora (EXP, potencias, raíz, Ans) y tabla de masas atómicas con solo los elementos que usa ese estudiante.
 - **Comprobante** en PNG o PDF con datos, tiempos, indicadores de integridad, resultado por reactivo, calificación, código de verificación y QR.
 
 ## Archivos
