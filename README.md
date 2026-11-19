@@ -12,6 +12,9 @@ Cubre el Tema 5 hasta **cálculo de fórmulas empíricas**: conservación de la 
 - **Herramientas** (botones flotantes a la derecha, accesos directos en cada reactivo que las requiere y aviso al entrar a cada bloque o al fallar un cálculo): calculadora (EXP, potencias, raíz, Ans) y tabla de masas atómicas con solo los elementos que usa ese estudiante.
 - **Comprobante** en PNG o PDF con datos, tiempos, indicadores de integridad, resultado por reactivo, calificación, código de verificación y QR.
 
+## Parte 2
+Estequiometría II (cálculos estequiométricos, reactivo limitante y rendimiento): carpeta [`parte2/`](parte2/) · alumno: `https://thuerta2398.github.io/estequiometria-composicion-materia/parte2/`
+
 ## Archivos
 | Archivo | Uso |
 |---|---|
