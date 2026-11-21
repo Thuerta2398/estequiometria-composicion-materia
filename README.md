@@ -15,6 +15,9 @@ Cubre el Tema 5 hasta **cálculo de fórmulas empíricas**: conservación de la 
 ## Parte 2
 Estequiometría II (cálculos estequiométricos, reactivo limitante y rendimiento): carpeta [`parte2/`](parte2/) · alumno: `https://thuerta2398.github.io/estequiometria-composicion-materia/parte2/`
 
+## Juego de repaso: Laboratorio Sellado
+Juego formativo de escape (≈ 52 min) que repasa todo el Tema 5, de la ecuación química al reactivo limitante: carpeta [`umbrella-lab/`](umbrella-lab/) · alumno: `https://thuerta2398.github.io/estequiometria-composicion-materia/umbrella-lab/`
+
 ## Archivos
 | Archivo | Uso |
 |---|---|
