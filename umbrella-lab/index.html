@@ -197,6 +197,27 @@ table.cnt tr.ne td{color:#e3867e}
 .report td:last-child{text-align:right;font-weight:700}
 .shake{animation:sh .3s}
 @keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+/* escenario */
+.stage{max-width:880px;margin:12px auto 0}
+.cvwrap{max-width:min(100%, calc((100dvh - 290px) * 1.5));margin:0 auto}
+@media (min-width:900px) and (pointer:fine){.cvwrap{max-width:min(100%, calc((100dvh - 360px) * 1.5))}}
+.cvwrap canvas{display:block;width:100%;height:auto;border-radius:8px;border:1px solid var(--line);background:#000;touch-action:none}
+.dlg .ent{display:block;color:var(--muted);font-size:.9rem;margin-bottom:4px}
+.dlg{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:10px 0;min-height:3.2em;font-size:.98rem}
+.ctrl{display:flex;justify-content:space-between;align-items:center;gap:12px;user-select:none;-webkit-user-select:none}
+.dpad{display:grid;grid-template-columns:repeat(3,58px);grid-template-rows:repeat(3,52px);gap:5px;touch-action:none}
+.dpad button{padding:0;font-size:1.2rem;touch-action:none;min-height:0}
+.dpad button.on{background:#333b3d;border-color:var(--amber)}
+.dpad .u{grid-column:2;grid-row:1}.dpad .l{grid-column:1;grid-row:2}.dpad .r{grid-column:3;grid-row:2}.dpad .d{grid-column:2;grid-row:3}
+.cside{display:flex;flex-direction:column;align-items:center;gap:8px}
+.abtn{width:78px;height:78px;border-radius:50%;background:var(--amber);color:#1b1404;border-color:var(--amber);font:700 1.6rem var(--mono);touch-action:manipulation}
+.kh{font-size:.78rem;color:var(--muted);text-align:center;max-width:14em}
+.backrow{margin:12px 0}
+@media (pointer:fine) and (min-width:900px){.dpad{display:none}.ctrl{justify-content:center}.cside{flex-direction:row}.kh{max-width:none}}
+@media (pointer:coarse){.kh{display:none}}
+@media (max-width:899px),(pointer:coarse){.roomhead .enter{display:none}.roomhead{margin-top:8px}.roomhead h2{font-size:1.1rem;margin:0}.stage{margin-top:8px}}
+@media (min-width:900px) and (pointer:fine){.dlg .ent{display:none}}
+@media (max-width:520px){.top .lbl{display:none}.top .in{padding:6px 12px;gap:6px 10px}.dpad{grid-template-columns:repeat(3,54px);grid-template-rows:repeat(3,48px)}.abtn{width:72px;height:72px}}
 @media (max-width:520px){
   .fld .lb{min-width:0;width:100%}
   .gas .bar{width:70px}
@@ -723,11 +744,12 @@ function topBar(){
   const k = RS ? `SALA ${RS.k+1}/${NR} · ${ROOMS[RS.k].name.toUpperCase()}${RS.review ? " · REPASO" : ""}` : "ESTACIÓN ALBACORA · NIVEL B-3";
   t.innerHTML = `<div class="top"><div class="in"><div class="ttl">${k}</div>
     <div class="gas" title="Exposición al vapor V-7"><span>EXPOSICIÓN</span><span class="bar"><i style="width:${g}%"></i></span><b>${g} %</b></div>
-    ${view === "room" ? `<button id="bMap" class="ghost">⌂ Mapa</button>` : ""}
+    ${view === "room" ? `<button id="bLit" class="ghost" title="Cambiar iluminación">${S.lit ? "🔦<span class=\"lbl\"> Linterna</span>" : "💡<span class=\"lbl\"> Iluminar</span>"}</button><button id="bMap" class="ghost">⌂<span class="lbl"> Mapa</span></button>` : ""}
     <button id="bMute" class="ghost" aria-label="Sonido">${muted ? "🔇" : "🔊"}</button></div></div>`;
   document.body.className = g >= 70 ? "gas-high" : g >= 40 ? "gas-mid" : "";
   $("bMute").onclick = () => { muted = !muted; try { localStorage.setItem(SAVE_KEY + ".mute", muted ? "1" : "0"); } catch(e){} topBar(); };
   if ($("bMap")) $("bMap").onclick = () => { RS = null; showMap(); };
+  if ($("bLit")) $("bLit").onclick = () => { S.lit = !S.lit; save(); topBar(); };
 }
 
 function showTitle(){
@@ -767,6 +789,7 @@ function showIntro(){
     <p>${esc(S.name)}: si lees esto, estás dentro. SELLO solo abre una puerta cuando recibe un cálculo correcto. Dejé notas en cada sala con lo que necesitas saber.</p>
     <p>Tu filtro resiste poco. Cada error eleva tu <b>exposición</b>; liberar una sala la reduce ${ALIVIO} %. Si llegas a 100 %, perderás el conocimiento y tendrás que repetir la sala.</p>
     <p>Al fondo está la <b>cámara del antídoto</b>. Prepara la dosis y SELLO abrirá la salida.</p>
+    <p>Las salas están a oscuras. Muévete con la cruceta (o con las flechas del teclado), acércate a lo que brilla y toca <b>A</b>. <b style="color:#8a5a00">Ámbar</b>: mis notas. <b style="color:#14777d">Cian</b>: una cerradura con un cálculo. <b style="color:#8a2a20">Rojo</b>: la llave que abre la puerta. Si no ves bien, el botón <b>💡 Iluminar</b> enciende las luces de emergencia.</p>
     <p>Herramientas: botón <b>🧮 Calculadora</b> (con EXP y N<sub>A</sub>) y botón <b>⚛ Tabla de masas</b>. Aparecen solo cuando los tocas.</p>
     <p style="text-align:right">— Dra. Inés Valdivia, jefa de laboratorio</p>
   </div><div class="row" style="justify-content:center;margin-top:20px"><button class="pri" id="bGo">Abrir el mapa del nivel</button></div></section>`;
@@ -826,28 +849,308 @@ function showMap(){
 }
 
 /* ---------- sala ---------- */
+/* =====================================================================
+   EXPLORACIÓN: cada sala es un escenario en cuadrícula con vista cenital
+   # muro · . piso · g vidrios (se pisa) · S estante · H campana · B mesa · X barril · C caja · T tanque · W tarja
+   1–5 objetos con reto (en orden) · N nota · k lugar de la llave · D puerta · P inicio
+   ===================================================================== */
+const TS = 48, MW = 15, MH = 10, STEP_MS = 135;
+const MAPS = [
+["###############","#S.S.H.H..S.S.#","#.............#","#.1..BB..BB.2.#","#....BB..BB...#","#P....k.....N.D","#....X.g...X..#","#.3..BB..BB.4.#","#....BB.5.....#","###############"],
+["###############","#H.H.H...S.S.S#","#.............#","#..1...2...3..#","#.............#","#.BBB.....BBB.#","#.BBB..k..BBB.#","#.....N.......#","#P.X..g...X...#","#######D#######"],
+["###############","#SSSS.SSSS.SSS#","#.............#","#.S.S.S.S.S.S.#","#.S1S.S.S2S.S.#","#.............#","#.S.S.S.S.S.S.#","#.S3S.SkS4S.S.#","#P.........N..D","###############"],
+["###############","#T.T.T...H.H..#","#.............#","#.1.CC...CC.2.#","#...CC.N.CC...#","#.............D","#.3..X.k.X..4.#","#.............#","#P..CC.5.CC...#","###############"],
+["###############","#H.H...W.W..S.#","#.............#","#.BB.1...2.BB.#","#.BB.......BB.#","#......k......#","#.BB.3...4.BB.#","#.BB.......BB.#","#P...X.N..X...#","#############D#"],
+["######D########","#....T.T...H.H#","#.1...........#","#...BBB.BBB.2.#","#...BBB.BBB...#","#.3....k......#","#...BBB.BBB.4.#","#...BBB.BBB...#","#P....N...5...#","###############"],
+["###############","#T.T.H.H.H.T.T#","#.............#","#..1.......2..#","#....BBBBB....#","#....B.k.B....#","#....BB.BB....#","#..3.......4..#","#P.....N......D","###############"]
+];
+/* nombre del objeto con reto en cada sala: [singular, artículo indef., demostrativo, etiqueta en pantalla] */
+const OBJ = [
+  ["contenedor rotulado","Un","Este","?"], ["balanza","Una","Esta","⚖"], ["frasco del archivo","Un","Este","PM"], ["contador","Un","Este","mol"],
+  ["analizador","Un","Este","%"], ["panel del reactor","Un","Este","→"], ["sintetizador","Un","Este","Rx"]
+];
+const C_NOTE = "#e3a630", C_TERM = "#3fc1c9", C_KEY = "#e05a4f", C_OK = "#6fc27a";
+const WALK = new Set([".", "g"]);
+const HELD = [];
+let loopOn = false, saveT = null;
+const saveSoon = () => { clearTimeout(saveT); saveT = setTimeout(save, 400); };
+
+function parseMap(k){
+  const M = {grid: MAPS[k].map(r => r.split("")), objs: [], note: null, key: null, door: null, start: null};
+  MAPS[k].forEach((r, y) => [...r].forEach((c, x) => {
+    if (/[1-9]/.test(c)){ M.objs[+c - 1] = {x, y}; M.grid[y][x] = "o"; }
+    else if (c === "N"){ M.note = {x, y}; M.grid[y][x] = "n"; }
+    else if (c === "k"){ M.key = {x, y}; M.grid[y][x] = "."; }
+    else if (c === "P"){ M.start = {x, y}; M.grid[y][x] = "."; }
+    else if (c === "D"){ M.door = {x, y}; }
+  }));
+  return M;
+}
+function solid(x, y){
+  const row = RS.map.grid[y], c = row && row[x];
+  if (c === undefined) return true;
+  if (c === "D") return !RS.keyGot;
+  return !WALK.has(c);
+}
+function objState(i){
+  if (RS.allDone || i < RS.i || (i === RS.i && RS.phase === "done")) return "solved";
+  if (i === RS.i && RS.noteRead) return "active";
+  return "off";
+}
+
 function enterRoom(k){
   const review = S.done[k];
   if (!review){
-    if (S.room !== k){ S.room = k; S.pidx = 0; S.res = []; S.seeds[k] = newSeed(); }
+    if (S.room !== k){ S.room = k; S.pidx = 0; S.res = []; S.seeds[k] = newSeed(); S.pos = null; S.noteRead = false; S.keyGot = false; }
     if (!S.seeds[k]) S.seeds[k] = newSeed();
     save();
   }
   const seed = review ? newSeed() : S.seeds[k];
-  if (!review && S.pidx >= ROOMS[k].gen(rng(seed)).length){ RS = {k, review:false, puzzles:[]}; return roomDone(); }
-  const puzzles = ROOMS[k].gen(rng(seed));
-  RS = {k, review, puzzles, i: review ? 0 : Math.min(S.pidx, puzzles.length-1), res: review ? [] : S.res.slice(), tries:0, phase:"ask", hinted:false, lastInput:null, co:null};
-  view = "room"; topBar(); renderRoom(true);
+  const puzzles = ROOMS[k].gen(rng(seed)), map = parseMap(k);
+  const pidx = review ? 0 : S.pidx;
+  const pos = !review && S.pos ? S.pos : {x: map.start.x, y: map.start.y, d: [1, 0]};
+  RS = {k, review, puzzles, map, i: Math.min(pidx, puzzles.length - 1), allDone: pidx >= puzzles.length,
+    res: review ? [] : S.res.slice(), tries: 0, phase: "ask", hinted: false, lastInput: null, co: null,
+    noteRead: !review && !!S.noteRead, keyGot: !review && !!S.keyGot,
+    p: {x: pos.x, y: pos.y, d: pos.d, fx: pos.x, fy: pos.y, from: null, t0: 0}, mode: "scene", prev: "scene", msg: "", bg: null};
+  HELD.length = 0;
+  view = "room"; topBar(); renderRoom();
 }
-function renderRoom(first){
+
+function renderRoom(){
   const R = ROOMS[RS.k];
-  const noteOpen = first && RS.i === 0;
-  app.innerHTML = `<div class="roomhead"><div class="k">SALA ${RS.k+1} DE ${NR}${RS.review ? " · REPASO" : ""} · ~${R.min} MIN</div><h2>${R.name}</h2><p>${R.enter}</p></div>
-  <div class="roomgrid" id="rg"><div><details class="note" ${noteOpen ? "open" : ""}><summary>Nota de la Dra. Valdivia</summary><div class="body">${R.note}</div></details>
-    <div class="card puz" id="puz"></div></div><aside id="tools"></aside></div>`;
-  renderPuzzle(); renderTools();
-  if (first) scrollTo(0,0);
+  const dpad = `<div class="dpad" aria-label="Cruceta">
+      <button data-dir="0,-1" class="u" aria-label="Arriba">▲</button><button data-dir="-1,0" class="l" aria-label="Izquierda">◀</button>
+      <button data-dir="1,0" class="r" aria-label="Derecha">▶</button><button data-dir="0,1" class="d" aria-label="Abajo">▼</button></div>`;
+  app.innerHTML = `<div class="roomhead"><div class="k">SALA ${RS.k+1} DE ${NR}${RS.review ? " · REPASO" : ""} · ~${R.min} MIN</div><h2>${R.name}</h2><p class="enter">${R.enter}</p></div>
+  <div id="stage" class="stage">
+    <div class="cvwrap"><canvas id="cv" width="${MW*TS}" height="${MH*TS}" aria-label="Escenario de la sala"></canvas></div>
+    <div class="dlg" id="dlg" aria-live="polite"></div>
+    <div class="ctrl">${dpad}
+      <div class="cside"><button id="bA" class="abtn" aria-label="Interactuar">A</button>
+        <div class="kh">Flechas o WASD para moverte · Espacio o Enter = A</div>
+        <button id="bNote" class="ghost">📜 Nota</button></div></div>
+  </div>
+  <div id="pview" hidden><div class="row backrow"><button id="bBack">◀ Volver a la sala</button><button id="bNoteP" class="ghost">📜 Nota</button></div>
+    <div class="roomgrid" id="rg"><div><div class="card puz" id="puz"></div></div><aside id="tools"></aside></div></div>
+  <div id="nview" hidden><div class="row backrow"><button id="bBackN">◀ Volver</button></div>
+    <details class="note" open><summary>Nota de la Dra. Valdivia</summary><div class="body">${R.note}</div></details>
+    <div class="row"><button class="pri" id="bBackN2">Entendido, volver</button></div></div>`;
+  RS.bg = buildBG();
+  app.querySelectorAll(".dpad button").forEach(b => {
+    const d = b.dataset.dir.split(",").map(Number);
+    const on = e => { e.preventDefault(); try { b.setPointerCapture(e.pointerId); } catch(_){} pushDir(d); RS.queued = d; b.classList.add("on"); };
+    const off = () => { dropDir(d); b.classList.remove("on"); };
+    b.addEventListener("pointerdown", on); b.addEventListener("pointerup", off); b.addEventListener("pointercancel", off); b.addEventListener("lostpointercapture", off);
+    b.addEventListener("contextmenu", e => e.preventDefault());
+  });
+  $("bA").onclick = act;
+  $("bNote").onclick = () => openNote("scene");
+  $("bNoteP").onclick = () => openNote("puzzle");
+  $("bBack").onclick = () => { if (RS.phase === "done") next(); else setMode("scene"); };
+  $("bBackN").onclick = $("bBackN2").onclick = () => setMode(RS.prev);
+  setMode("scene"); scrollTo(0, 0);
 }
+function openNote(from){ RS.noteRead = true; if (!RS.review){ S.noteRead = true; save(); } RS.prev = from; setMode("note"); }
+function setMode(m){
+  RS.mode = m; HELD.length = 0;
+  $("stage").hidden = m !== "scene"; $("pview").hidden = m !== "puzzle"; $("nview").hidden = m !== "note";
+  app.querySelector(".roomhead .enter").hidden = m !== "scene";
+  if (m === "puzzle"){ renderPuzzle(); renderTools(); }
+  if (m === "scene"){ updatePrompt(true); startLoop(); }
+  if (m !== "scene") scrollTo(0, 0);
+}
+const pushDir = d => { dropDir(d); HELD.push(d); };
+const dropDir = d => { for (let i = HELD.length - 1; i >= 0; i--) if (HELD[i][0] === d[0] && HELD[i][1] === d[1]) HELD.splice(i, 1); };
+
+/* ---------- bucle ---------- */
+function startLoop(){ if (loopOn) return; loopOn = true; requestAnimationFrame(tick); }
+const sceneOn = () => view === "room" && RS && RS.mode === "scene" && $("cv");
+function tick(ts){
+  if (!sceneOn()){ loopOn = false; return; }
+  try { step(ts); if (sceneOn()) draw(ts); }
+  catch(e){ console.error(e); }
+  requestAnimationFrame(tick);
+}
+function step(ts){
+  const p = RS.p;
+  if (p.from){
+    const u = Math.min(1, (ts - p.t0) / STEP_MS);
+    p.fx = p.from[0] + (p.x - p.from[0]) * u; p.fy = p.from[1] + (p.y - p.from[1]) * u;
+    if (u >= 1){ p.from = null; arrived(); }
+    return;
+  }
+  const d = HELD[HELD.length - 1] || RS.queued; RS.queued = null; if (!d) return;
+  const turned = p.d[0] !== d[0] || p.d[1] !== d[1];
+  p.d = d;
+  const nx = p.x + d[0], ny = p.y + d[1];
+  if (!solid(nx, ny)){ p.from = [p.x, p.y]; p.x = nx; p.y = ny; p.t0 = ts; }
+  else if (turned) updatePrompt();
+}
+function arrived(){
+  const p = RS.p, M = RS.map; RS.moved = true;
+  if (RS.allDone && !RS.keyGot && p.x === M.key.x && p.y === M.key.y){
+    RS.keyGot = true; if (!RS.review) S.keyGot = true; sfx.door();
+  }
+  if (p.x === M.door.x && p.y === M.door.y){ HELD.length = 0; return roomDone(); }
+  if (!RS.review){ S.pos = {x: p.x, y: p.y, d: p.d}; saveSoon(); }
+  updatePrompt();
+}
+function nearTarget(){
+  const p = RS.p, M = RS.map;
+  const cands = [[p.x + p.d[0], p.y + p.d[1]], [p.x + 1, p.y], [p.x - 1, p.y], [p.x, p.y + 1], [p.x, p.y - 1]];
+  for (const [x, y] of cands){
+    if (M.note.x === x && M.note.y === y) return {t: "note"};
+    const i = M.objs.findIndex(o => o.x === x && o.y === y);
+    if (i >= 0) return {t: "obj", i};
+  }
+  return null;
+}
+function updatePrompt(force){
+  const t = nearTarget(), n = RS.puzzles.length, [nm, un, est] = OBJ[RS.k];
+  let m;
+  if (t && t.t === "note") m = `📜 Nota de la Dra. Valdivia. Toca <b>A</b> para leerla.`;
+  else if (t && t.t === "obj"){
+    const s = objState(t.i);
+    m = s === "active" ? `${un} ${nm} parpadea en cian. Toca <b>A</b> para abrir la cerradura ${t.i+1} de ${n}.`
+      : s === "solved" ? `Cerradura ${t.i+1} de ${n}: resuelta ✔`
+      : RS.noteRead ? `${est} ${nm} está apagado. Primero resuelve el que brilla en cian.` : `Está apagado. Primero lee la nota de la Dra. Valdivia (brillo ámbar).`;
+  }
+  else if (!RS.noteRead) m = `Busca la <b style="color:${C_NOTE}">nota de la Dra. Valdivia</b>: brilla en ámbar.`;
+  else if (!RS.allDone) m = `Cerraduras resueltas: ${RS.i} de ${n}. Busca ${un.toLowerCase()} ${nm} que brilla en <b style="color:${C_TERM}">cian</b>.`;
+  else if (!RS.keyGot) m = `Se oyó un clic metálico: una <b style="color:${C_KEY}">llave roja</b> cayó en la sala. Recógela.`;
+  else m = `🔑 Tienes la llave. La puerta está desbloqueada (<b style="color:${C_OK}">verde</b>): sal por ahí.`;
+  if (!RS.moved) m = `<span class="ent">${ROOMS[RS.k].enter}</span>` + m;
+  if (force || m !== RS.msg){ RS.msg = m; const d = $("dlg"); if (d) d.innerHTML = m; }
+}
+function act(){
+  if (!RS || RS.mode !== "scene") return;
+  const t = nearTarget();
+  if (!t){ updatePrompt(true); return; }
+  if (t.t === "note") return openNote("scene");
+  if (objState(t.i) === "active"){ sfx.ok(); setMode("puzzle"); }
+  else { sfx.bad(); updatePrompt(true); const d = $("dlg"); d.classList.remove("shake"); void d.offsetWidth; d.classList.add("shake"); }
+}
+
+/* ---------- dibujo ---------- */
+function rr(c, x, y, w, h, r, fill){ c.beginPath(); c.roundRect(x, y, w, h, r); c.fillStyle = fill; c.fill(); }
+function buildBG(){
+  const cv = document.createElement("canvas"); cv.width = MW*TS; cv.height = MH*TS;
+  const c = cv.getContext("2d"), G = RS.map.grid, T = TS;
+  const at = (x, y) => (G[y] && G[y][x]) || "#";
+  const h = (x, y) => ((x * 73856093) ^ (y * 19349663) ^ (RS.k * 83492791)) >>> 0;
+  for (let y = 0; y < MH; y++) for (let x = 0; x < MW; x++){
+    const X = x*T, Y = y*T;
+    c.fillStyle = (x + y) % 2 ? "#3b3f41" : "#373b3d"; c.fillRect(X, Y, T, T);
+    c.strokeStyle = "#2f3335"; c.lineWidth = 1; c.strokeRect(X + .5, Y + .5, T, T);
+    if (h(x, y) % 9 === 0){ c.fillStyle = "rgba(0,0,0,.18)"; c.beginPath(); c.ellipse(X + T/2, Y + T/2, T*.35, T*.2, h(x,y) % 3, 0, 7); c.fill(); }
+  }
+  // muros
+  for (let y = 0; y < MH; y++) for (let x = 0; x < MW; x++) if (at(x, y) === "#" || at(x, y) === "D"){
+    c.fillStyle = "#1a1d1e"; c.fillRect(x*T, y*T, T, T);
+    if (at(x, y + 1) !== "#" && at(x, y + 1) !== "D" && y < MH - 1){ c.fillStyle = "#2a2e30"; c.fillRect(x*T, y*T + T - 9, T, 9); }
+  }
+  // tuberías en el muro superior
+  c.strokeStyle = "#4a4f51"; c.lineWidth = 4; c.beginPath(); c.moveTo(T, 14); c.lineTo((MW - 1)*T, 14); c.stroke();
+  c.strokeStyle = "#33383a"; c.lineWidth = 3; c.beginPath(); c.moveTo(T, 26); c.lineTo((MW - 1)*T, 26); c.stroke();
+  c.save(); c.shadowColor = "rgba(0,0,0,.55)"; c.shadowBlur = 12; c.shadowOffsetY = 5;
+  for (let y = 0; y < MH; y++) for (let x = 0; x < MW; x++){
+    const t = at(x, y), X = x*T, Y = y*T;
+    if (t === "B"){
+      const l = at(x-1, y) === "B" ? 0 : 4, r = at(x+1, y) === "B" ? 0 : 4, u = at(x, y-1) === "B" ? 0 : 4, d = at(x, y+1) === "B" ? 0 : 4;
+      c.fillStyle = "#5a5f61"; c.fillRect(X + l, Y + u, T - l - r, T - u - d);
+    }
+    if (t === "S") rr(c, X + 4, Y + 4, T - 8, T - 10, 4, "#4d5254");
+    if (t === "H") rr(c, X + 2, Y + 3, T - 4, T - 8, 5, "#62676a");
+    if (t === "C") rr(c, X + 6, Y + 6, T - 12, T - 12, 3, "#5b5446");
+    if (t === "W") rr(c, X + 4, Y + 6, T - 8, T - 12, 6, "#6b7072");
+    if (t === "X" || t === "T"){ c.beginPath(); c.arc(X + T/2, Y + T/2, T*(t === "X" ? .34 : .3), 0, 7); c.fillStyle = t === "X" ? "#585d60" : "#4f5a5c"; c.fill(); }
+  }
+  c.restore();
+  for (let y = 0; y < MH; y++) for (let x = 0; x < MW; x++){
+    const t = at(x, y), X = x*T, Y = y*T, hh = h(x, y);
+    if (t === "B"){
+      const l = at(x-1, y) === "B" ? 0 : 9, r = at(x+1, y) === "B" ? 0 : 9, u = at(x, y-1) === "B" ? 0 : 9, d = at(x, y+1) === "B" ? 0 : 9;
+      c.fillStyle = "#6b7072"; c.fillRect(X + l, Y + u, T - l - r, T - u - d);
+      const k = hh % 5;
+      if (k === 0){ c.fillStyle = "#c5cbcd"; c.beginPath(); c.arc(X + 18, Y + 20, 6, 0, 7); c.fill(); c.fillStyle = "#9aa0a2"; c.beginPath(); c.arc(X + 32, Y + 30, 4, 0, 7); c.fill(); }
+      if (k === 1){ c.fillStyle = "#9aa0a2"; for (let i = 0; i < 4; i++) c.fillRect(X + 12 + i*7, Y + 16, 4, 16); }
+      if (k === 2){ c.strokeStyle = "#8d9591"; c.lineWidth = 2; c.beginPath(); c.moveTo(X + 12, Y + 14); c.lineTo(X + 34, Y + 30); c.lineTo(X + 20, Y + 36); c.stroke(); }
+      if (k === 3){ c.fillStyle = "#2b3133"; c.fillRect(X + 12, Y + 12, 24, 18); c.fillStyle = "#4a5658"; c.fillRect(X + 14, Y + 14, 20, 12); }
+    }
+    if (t === "S"){ for (let i = 0; i < 3; i++){ c.fillStyle = ["#aab0b2", "#7d8385", "#c9cfd1"][(hh + i) % 3]; c.beginPath(); c.moveTo(X + 11 + i*10, Y + 32); c.lineTo(X + 15 + i*10, Y + 12); c.lineTo(X + 19 + i*10, Y + 32); c.fill(); } }
+    if (t === "H"){ rr(c, X + 8, Y + 8, T - 16, T - 22, 3, "#2b3b3e"); c.fillStyle = "#9aa0a2"; c.fillRect(X + 8, Y + T - 13, T - 16, 3); }
+    if (t === "C"){ c.strokeStyle = "#7a705c"; c.lineWidth = 2; c.strokeRect(X + 9, Y + 9, T - 18, T - 18); c.beginPath(); c.moveTo(X + 9, Y + 9); c.lineTo(X + T - 9, Y + T - 9); c.moveTo(X + T - 9, Y + 9); c.lineTo(X + 9, Y + T - 9); c.stroke(); }
+    if (t === "W"){ c.fillStyle = "#3a4042"; c.beginPath(); c.ellipse(X + T/2, Y + T/2 + 2, 13, 9, 0, 0, 7); c.fill(); c.fillStyle = "#9aa0a2"; c.fillRect(X + T/2 - 2, Y + 8, 4, 8); }
+    if (t === "X"){ c.strokeStyle = "#7d8385"; c.lineWidth = 2; c.beginPath(); c.arc(X + T/2, Y + T/2, T*.22, 0, 7); c.stroke(); c.fillStyle = "#b39a3a"; c.font = "bold 14px sans-serif"; c.textAlign = "center"; c.fillText("☣", X + T/2, Y + T/2 + 5); }
+    if (t === "T"){ c.fillStyle = "#6b7577"; c.beginPath(); c.arc(X + T/2, Y + T/2, T*.18, 0, 7); c.fill(); c.fillStyle = "#2a2e30"; c.fillRect(X + T/2 - 3, Y + T/2 - 3, 6, 6); }
+    if (t === "g"){ c.fillStyle = "#cfd5d7"; [[8,12],[24,20],[16,32],[32,10],[36,30]].forEach(([a,b]) => { c.beginPath(); c.moveTo(X + a, Y + b); c.lineTo(X + a + 7, Y + b + 3); c.lineTo(X + a + 2, Y + b + 7); c.fill(); }); }
+  }
+  return cv;
+}
+function glow(c, x, y, col, r, a){
+  const g = c.createRadialGradient(x, y, 1, x, y, r);
+  g.addColorStop(0, col + (a || "dd")); g.addColorStop(.4, col + "66"); g.addColorStop(1, col + "00");
+  c.fillStyle = g; c.beginPath(); c.arc(x, y, r, 0, 7); c.fill();
+}
+function draw(ts){
+  const cv = $("cv"), c = cv.getContext("2d"), T = TS, M = RS.map, p = RS.p, lit = !!S.lit;
+  const pulse = .55 + .45 * Math.sin(ts / 260);
+  c.drawImage(RS.bg, 0, 0);
+  // puerta
+  const D = M.door, dc = RS.keyGot ? C_OK : C_KEY;
+  c.fillStyle = "#24282a"; c.fillRect(D.x*T, D.y*T, T, T);
+  c.fillStyle = RS.keyGot ? "#1f3a24" : "#5a1712"; c.fillRect(D.x*T + 7, D.y*T + 7, T - 14, T - 14);
+  c.fillStyle = dc; c.beginPath(); c.arc(D.x*T + T/2, D.y*T + T/2, 6, 0, 7); c.fill();
+  // objetos con reto
+  M.objs.forEach((o, i) => {
+    const s = objState(i), X = o.x*T, Y = o.y*T;
+    rr(c, X + 6, Y + 8, T - 12, T - 14, 5, "#262a2c");
+    rr(c, X + 10, Y + 12, T - 20, T - 24, 3, s === "active" ? C_TERM : s === "solved" ? "#2f5a37" : "#2f3537");
+    c.fillStyle = s === "active" ? "#06292b" : s === "solved" ? "#bfe8c4" : "#4b5355"; c.font = "bold 12px ui-monospace,monospace"; c.textAlign = "center";
+    c.fillText(s === "solved" ? "✓" : OBJ[RS.k][3], X + T/2, Y + T/2 + 3);
+    c.fillStyle = "#4b5355"; c.fillRect(X + T/2 - 5, Y + T - 8, 10, 3);
+  });
+  // nota
+  const N = M.note, NX = N.x*T + T/2, NY = N.y*T + T/2;
+  rr(c, NX - 11, NY - 14, 22, 28, 3, RS.noteRead ? "#bdb49b" : "#e8dcb8");
+  c.fillStyle = C_NOTE; [-6, 0, 6].forEach(d => c.fillRect(NX - 7, NY + d - 1, 14, 2));
+  // llave
+  const K = M.key, showKey = RS.allDone && !RS.keyGot;
+  if (showKey){ const KX = K.x*T + T/2, KY = K.y*T + T/2; c.strokeStyle = C_KEY; c.lineWidth = 4; c.beginPath(); c.arc(KX - 7, KY, 6, 0, 7); c.stroke(); c.beginPath(); c.moveTo(KX - 1, KY); c.lineTo(KX + 12, KY); c.lineTo(KX + 12, KY + 6); c.stroke(); }
+  // jugador
+  const px = p.fx*T + T/2, py = p.fy*T + T/2, ang = Math.atan2(p.d[1], p.d[0]);
+  c.save(); c.translate(px, py); c.rotate(ang);
+  c.shadowColor = "rgba(0,0,0,.6)"; c.shadowBlur = 8;
+  c.beginPath(); c.ellipse(0, 0, 13, 15, 0, 0, 7); c.fillStyle = "#e9ebe6"; c.fill(); c.shadowBlur = 0;
+  c.fillStyle = "#9aa0a2"; c.fillRect(4, -2, 10, 4);
+  c.beginPath(); c.arc(-1, 0, 7.5, 0, 7); c.fillStyle = "#3a2e26"; c.fill();
+  c.restore();
+  // oscuridad y linterna
+  if (!lit){
+    const m = RS.mask || (RS.mask = document.createElement("canvas")); m.width = cv.width; m.height = cv.height;
+    const k = m.getContext("2d");
+    const flick = Math.random() < .015 ? .97 : .87;
+    k.fillStyle = `rgba(3,4,5,${flick})`; k.fillRect(0, 0, m.width, m.height);
+    k.globalCompositeOperation = "destination-out";
+    let g = k.createRadialGradient(px, py, 8, px, py, T*1.7); g.addColorStop(0, "rgba(0,0,0,1)"); g.addColorStop(1, "rgba(0,0,0,0)");
+    k.fillStyle = g; k.beginPath(); k.arc(px, py, T*1.7, 0, 7); k.fill();
+    k.save(); k.translate(px, py); k.rotate(ang);
+    g = k.createRadialGradient(0, 0, 10, 0, 0, T*6.2); g.addColorStop(0, "rgba(0,0,0,.95)"); g.addColorStop(.7, "rgba(0,0,0,.65)"); g.addColorStop(1, "rgba(0,0,0,0)");
+    k.fillStyle = g; k.beginPath(); k.moveTo(0, 0); k.arc(0, 0, T*6.2, -.5, .5); k.closePath(); k.fill(); k.restore();
+    c.drawImage(m, 0, 0);
+  } else {
+    const g = c.createRadialGradient(cv.width/2, cv.height/2, cv.height*.3, cv.width/2, cv.height/2, cv.width*.65);
+    g.addColorStop(0, "rgba(0,0,0,0)"); g.addColorStop(1, "rgba(0,0,0,.45)"); c.fillStyle = g; c.fillRect(0, 0, cv.width, cv.height);
+  }
+  // pistas de color (visibles en la oscuridad)
+  M.objs.forEach((o, i) => { if (objState(i) === "active"){ const X = o.x*T + T/2, Y = o.y*T + T/2; glow(c, X, Y, C_TERM, T*(.7 + .15*pulse)); c.fillStyle = "#fff"; c.font = "bold 18px sans-serif"; c.textAlign = "center"; c.fillText("!", X, Y - T*.62 - 3*pulse); } });
+  if (!RS.noteRead) glow(c, NX, NY, C_NOTE, T*(.65 + .15*pulse)); else glow(c, NX, NY, C_NOTE, T*.4, "55");
+  if (showKey) glow(c, K.x*T + T/2, K.y*T + T/2, C_KEY, T*(.7 + .2*pulse));
+  glow(c, D.x*T + T/2, D.y*T + T/2, dc, T*(RS.keyGot ? .8 + .2*pulse : .55));
+  c.fillStyle = "rgba(196,67,58,.22)"; c.fillRect(0, 0, cv.width, 4);
+}
+
 function renderPuzzle(){
   const p = RS.puzzles[RS.i], n = RS.puzzles.length;
   const dots = RS.puzzles.map((_,j) => `<i class="${RS.res[j] === true ? "ok" : RS.res[j] === false ? "ko" : j === RS.i ? "now" : ""}"></i>`).join("");
@@ -956,7 +1259,7 @@ function resolve(ok){
   $("bHint").disabled = true;
   const last = RS.i === RS.puzzles.length - 1;
   $("fb").innerHTML = (ok ? `<div class="msg ok">✔ Correcto. La cerradura cede.</div>` : `<div class="msg ko">✘ Se agotaron los intentos. SELLO muestra el procedimiento correcto y te deja avanzar; revísalo con calma.</div>`) +
-    `<div class="sol">${p.sol}</div><div class="actions"><button class="pri" id="bNext">${last ? "Liberar la sala ▶" : "Siguiente cerradura ▶"}</button></div>`;
+    `<div class="sol">${p.sol}</div><div class="actions"><button class="pri" id="bNext">${last ? "Volver a la sala: buscar la llave ▶" : "Volver a la sala ▶"}</button></div>`;
   // marca el punto
   const d = $("puz").querySelectorAll(".dots i")[RS.i]; if (d){ d.className = ok ? "ok" : "ko"; }
   $("bNext").onclick = next;
@@ -965,15 +1268,14 @@ function resolve(ok){
   $("fb").scrollIntoView({block:"nearest", behavior:"smooth"});
 }
 function next(){
-  if (RS.i < RS.puzzles.length - 1){
-    RS.i++; RS.tries = 0; RS.phase = "ask"; RS.hinted = false; RS.co = null; RS.lastInput = null;
-    renderPuzzle(); $("puz").scrollIntoView({block:"start", behavior:"smooth"});
-  } else roomDone();
+  if (RS.i < RS.puzzles.length - 1){ RS.i++; RS.tries = 0; RS.phase = "ask"; RS.hinted = false; RS.co = null; RS.lastInput = null; }
+  else { RS.allDone = true; sfx.door(); }
+  setMode("scene");
 }
 function addGas(x){ S.gas = Math.max(0, Math.min(100, S.gas + x)); S.gasMax = Math.max(S.gasMax, S.gas); topBar(); }
 function faint(){
   sfx.faint(); S.st.faints++;
-  const k = RS.k; S.gas = 40; S.pidx = 0; S.res = []; S.seeds[k] = newSeed(); save();
+  const k = RS.k; S.gas = 40; S.pidx = 0; S.res = []; S.seeds[k] = newSeed(); S.pos = null; S.keyGot = false; save();
   RS = null; closeTools(); view = "event"; topBar();
   app.innerHTML = `<section class="event faint"><div class="big">EXPOSICIÓN 100 %</div>
     <p>La vista se nubla y caes sobre el piso frío. Despiertas en la entrada de la ${ROOMS[k].name.toLowerCase()} con el filtro recargado a medias (exposición 40 %).</p>
@@ -985,7 +1287,7 @@ function roomDone(){
   const k = RS.k, review = RS.review, R = ROOMS[k];
   closeTools();
   if (review){ RS = null; showMap(); return; }
-  S.done[k] = true; S.room = -1; S.pidx = 0; S.res = []; S.gas = Math.max(0, S.gas - ALIVIO); save();
+  S.done[k] = true; S.room = -1; S.pidx = 0; S.res = []; S.pos = null; S.noteRead = false; S.keyGot = false; S.gas = Math.max(0, S.gas - ALIVIO); save();
   sfx.door(); RS = null;
   if (k === NR - 1){ S.finished = true; save(); return showEnd(); }
   view = "event"; topBar();
@@ -1122,14 +1424,25 @@ function useResult(v){
   inp.scrollIntoView({block:"center", behavior:"smooth"});
 }
 addEventListener("keydown", e => {
-  if (!TOOLS.calc || view !== "room" || (document.activeElement && document.activeElement.tagName === "INPUT")) return;
+  if (!TOOLS.calc || view !== "room" || !RS || RS.mode !== "puzzle" || (document.activeElement && document.activeElement.tagName === "INPUT")) return;
   const map = {"/":"÷","*":"×","-":"−","+":"+","^":"xʸ","(":"(",")":")","Enter":"=","=":"=","Backspace":"⌫","Escape":"C","e":"EXP","E":"EXP"};
   const k = /^[0-9.]$/.test(e.key) ? e.key : map[e.key];
   if (k){ e.preventDefault(); calcPress(k); }
 });
 
+const KDIR = {ArrowUp:[0,-1], ArrowDown:[0,1], ArrowLeft:[-1,0], ArrowRight:[1,0], w:[0,-1], s:[0,1], a:[-1,0], d:[1,0], W:[0,-1], S:[0,1], A:[-1,0], D:[1,0]};
+addEventListener("keydown", e => {
+  if (view !== "room" || !RS || RS.mode !== "scene" || e.ctrlKey || e.metaKey || e.altKey) return;
+  if (document.activeElement && document.activeElement.tagName === "INPUT") return;
+  const d = KDIR[e.key];
+  if (d){ e.preventDefault(); if (!e.repeat) pushDir(d); return; }
+  if (e.key === " " || e.key === "Enter"){ e.preventDefault(); if (!e.repeat) act(); }
+});
+addEventListener("keyup", e => { const d = KDIR[e.key]; if (d) dropDir(d); });
+addEventListener("blur", () => { HELD.length = 0; });
+
 /* ---------- inicio ---------- */
-window.LAB = { get S(){ return S; }, get RS(){ return RS; }, ROOMS, mm, parse };
+window.LAB = { get S(){ return S; }, get RS(){ return RS; }, ROOMS, mm, parse, solid, act, objState, HELD };
 showTitle();
 </script>
 <footer class="th-firma">Elaborado por Dr. T. Huerta</footer>
