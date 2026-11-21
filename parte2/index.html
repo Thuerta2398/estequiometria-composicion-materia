@@ -134,7 +134,7 @@ table.ver{border-collapse:collapse;margin:6px 0}table.ver td,table.ver th{border
 .mtpl .molg{grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}.mtpl .molg label{white-space:nowrap}
 @media print{body *{display:none!important}body::before{content:"La impresión está deshabilitada en esta actividad.";display:block;padding:40px;font-size:20px}}
 </style>
-</head>
+<style id="th-firma-css">.th-firma{display:block;clear:both;width:100%;box-sizing:border-box;text-align:center;font:400 12px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:inherit;opacity:.65;padding:14px 12px 18px;margin:0;letter-spacing:.02em}.th-firma-ov{font-size:12px!important;opacity:.75;margin:4px 0 0}@media (orientation:landscape) and (pointer:coarse){#wrap>.th-firma{display:none}}</style></head>
 <body>
 <div id="wm"></div>
 
@@ -157,6 +157,7 @@ table.ver{border-collapse:collapse;margin:6px 0}table.ver td,table.ver th{border
   <label class="chk"><input type="checkbox" id="rOk"> Leí las reglas y trabajaré de forma individual.</label>
   <div class="err" id="rErr"></div>
   <button class="btn" id="rGo" style="width:100%;margin-top:6px;padding:12px">Entrar en pantalla completa e iniciar</button>
+  <p class="th-firma-ov" style="text-align:center">Elaborado por Dr. T. Huerta</p>
 </div></div>
 
 <header id="top">
@@ -2880,7 +2881,7 @@ function drawComp(sm,url){const W=1080,H=1780,c=document.createElement('canvas')
   lab('CÓDIGO DE VERIFICACIÓN',75,y+64);x.fillStyle=INK;x.font=`800 76px ui-monospace,"SF Mono",Menlo,Consolas,monospace`;x.fillText(sm.c,75,y+156);
   x.fillStyle=MUT;x.font=`400 22px ${F}`;wrapT(x,'Tu profesor escanea el QR para comprobar que los datos no fueron modificados. Si se edita la imagen, el código deja de coincidir.',75,y+212,560,31);
   drawQR(x,url,W-70-280,y+25,280);
-  x.fillStyle=MUT;x.font=`400 19px ${F}`;wrapT(x,'✓ = primer intento (1 pt) · ½ = segundo intento (0.5 pt) · ✗ = sin acierto. Reactivos generados a partir de la matrícula. Elaborado por T. Huerta.',60,y+bH+44,W-120,28);
+  x.fillStyle=MUT;x.font=`400 19px ${F}`;wrapT(x,'✓ = primer intento (1 pt) · ½ = segundo intento (0.5 pt) · ✗ = sin acierto. Reactivos generados a partir de la matrícula. Elaborado por Dr. T. Huerta.',60,y+bH+44,W-120,28);
   return c;}
 function rr(x,X,Y,w,h,r){x.beginPath();x.moveTo(X+r,Y);x.arcTo(X+w,Y,X+w,Y+h,r);x.arcTo(X+w,Y+h,X,Y+h,r);x.arcTo(X,Y+h,X,Y,r);x.arcTo(X,Y,X+w,Y,r);x.closePath();}
 function wrapT(x,t,X,Y,mw,lh){let line='';t.split(' ').forEach(w=>{const s=line?line+' '+w:w;if(x.measureText(s).width>mw&&line){x.fillText(line,X,Y);Y+=lh;line=w;}else line=s;});if(line)x.fillText(line,X,Y);}
@@ -2945,5 +2946,6 @@ window.addEventListener('pagehide',save);
 })();
 
 </script>
+<footer class="th-firma">Elaborado por Dr. T. Huerta</footer>
 </body>
 </html>

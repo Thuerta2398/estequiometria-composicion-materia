@@ -23,7 +23,7 @@ button{font:inherit;background:var(--acc);color:#fff;border:0;border-radius:11px
 sub,sup{font-size:.72em;line-height:0}details summary{cursor:pointer;color:var(--acc);font-weight:600}
 table.tsol td,table.tsol th{border:1px solid #d9dfe9;padding:3px 8px;text-align:center;font-size:.88rem}
 </style>
-</head>
+<style id="th-firma-css">.th-firma{display:block;clear:both;width:100%;box-sizing:border-box;text-align:center;font:400 12px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:inherit;opacity:.65;padding:14px 12px 18px;margin:0;letter-spacing:.02em}.th-firma-ov{font-size:12px!important;opacity:.75;margin:4px 0 0}@media (orientation:landscape) and (pointer:coarse){#wrap>.th-firma{display:none}}</style></head>
 <body>
 <header><h1>Verificar comprobante</h1><p>Estequiometría II · Composición de la Materia · CEUX Ensenada (uso docente)</p></header>
 <main>
@@ -242,5 +242,6 @@ $('fs2').onsubmit=e=>{e.preventDefault();const m=normMat($('sm').value);if(m.len
     <details><summary>Solución</summary>${it.sol}</details></div>`).join('');};
 })();
 </script>
+<footer class="th-firma">Elaborado por Dr. T. Huerta</footer>
 </body>
 </html>
